@@ -1000,9 +1000,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // no window manager? good luck with that
         }
 
-        if (mAssistManager == null) {
-            mAssistManager = new AssistManager(this, context);
-        }
+        addAppCircleSidebar();
+
+
+        mAssistManager = new AssistManager(this, context);
         if (mNavigationBarView == null) {
             mAssistManager.onConfigurationChanged();
         }
