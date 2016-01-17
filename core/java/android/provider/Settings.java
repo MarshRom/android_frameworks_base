@@ -3586,6 +3586,12 @@ public final class Settings {
         };
 
         /**
+         * whether to enable torch on lockscreen
+         * @hide
+         */
+        public static final String KEYGUARD_TOGGLE_TORCH = "keyguard_toggle_torch";
+
+        /**
          *  Enable navigation bar double tap gesture on to put device to sleep
          * @hide
          */
