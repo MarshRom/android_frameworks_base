@@ -57,6 +57,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManager;
 import android.inputmethodservice.InputMethodService;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
@@ -136,6 +137,7 @@ import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.qs.QSDragPanel;
 import com.android.systemui.qs.QSPanel;
+import com.android.systemui.recents.RecentsActivity;
 import com.android.systemui.recents.ScreenPinningRequest;
 import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.statusbar.ActivatableNotificationView;
@@ -148,6 +150,7 @@ import com.android.systemui.statusbar.EmptyShadeView;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.GestureRecorder;
 import com.android.systemui.statusbar.KeyguardIndicationController;
+import com.android.systemui.statusbar.NotificationBackgroundView;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.NotificationOverflowContainer;
@@ -843,7 +846,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         WallpaperManager wallpaperManager = (WallpaperManager) mContext.getSystemService(
                 Context.WALLPAPER_SERVICE);
         mKeyguardWallpaper = wallpaperManager.getKeyguardBitmap();
-
+//TODO: BLUR
         mUnlockMethodCache = UnlockMethodCache.getInstance(mContext);
         mUnlockMethodCache.addListener(this);
         startKeyguard();
@@ -1278,7 +1281,79 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
 
+        //ME
+        try {
+            // receiver
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (NotificationPanelView.mKeyguardShowing) {
+                        return;
+                    }
+
+                    String action = intent.getAction();
+
+                    // alterou a rotação ?
+               if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
+                        if (NotificationPanelView.mKeyguardShowing) {
+                            return;
+                        }
+                        // recents
+                        RecentsActivity.onConfigurationChanged();
+
+                        // ----------------------------------------------------------------------
+                        // se na rotação do celular o mod estiver habilitado e o painel expandido
+                        // estiver aberto, fecha o painel expandido forçando o usuário a expandir
+                        // o painel novamente para obtér a imagem desfocada com a rotação atual!!
+                        // ----------------------------------------------------------------------
+
+                        // habilitado ?
+                        if (mExpandedVisible && NotificationPanelView.mBlurredStatusBarExpandedEnabled && (!NotificationPanelView.mKeyguardShowing)) {
+
+                            // fecha o painel
+                            makeExpandedInvisible();
+
+                        }
+                    }
+
+       //             if (action.equals(Intent.ACTION_SCREEN_OFF)) {
+         //               NotificationPanelView.recycle();
+           //         }
+
+                    // atualiza
+
+
+                    // mata
+
+                }
+            };
+
+            // registra o receiver
+            IntentFilter intent = new IntentFilter();
+            intent.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+            this.mContext.registerReceiver(receiver, intent);
+
+            // inicia
+            RecentsActivity.init(this.mContext);
+
+            // atualizam as preferências
+            updatePreferences(this.mContext);
+        } catch (Exception e){
+            Log.d("mango918", String.valueOf(e));
+        }
+
         return mStatusBarView;
+    }
+
+    public static void updatePreferences(Context context) {
+
+        // atualiza
+        NotificationPanelView.updatePreferences(context);
+        RecentsActivity.updatePreferences(context);
+        NotificationBackgroundView.updatePreferences(context);
+        StatusBarHeaderView.updatePreferences(context);
+        BaseStatusBar.updatePreferences();
     }
 
     private void clearAllNotifications() {
@@ -2573,6 +2648,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     void makeExpandedVisible(boolean force) {
+        NotificationPanelView.startBlurTask();
+
         if (SPEW) Log.d(TAG, "Make expanded visible: expanded visible=" + mExpandedVisible);
         if (!force && (mExpandedVisible || !panelsEnabled())) {
             return;
@@ -2730,6 +2807,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (!mStatusBarKeyguardViewManager.isShowing()) {
             WindowManagerGlobal.getInstance().trimMemory(ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN);
         }
+        NotificationPanelView.recycle();
     }
 
     private void adjustBrightness(int x) {
@@ -3477,6 +3555,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;
                 notifyNavigationBarScreenOn(true);
+                NotificationPanelView.recycle();
             } else if (Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED.equals(action)) {
                 WallpaperManager wm = (WallpaperManager) mContext.getSystemService(
                         Context.WALLPAPER_SERVICE);

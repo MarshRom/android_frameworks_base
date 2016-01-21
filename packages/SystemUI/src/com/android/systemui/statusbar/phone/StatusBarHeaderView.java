@@ -130,6 +130,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private int mClockCollapsedSize;
     private int mClockExpandedSize;
 
+    private static boolean mTranslucentHeader;
+    private static int mTranslucencyPercentage;
+    private static StatusBarHeaderView mStatusBarHeaderView;
+
     /**
      * In collapsed QS, the clock and avatar are scaled down a bit post-layout to allow for a nice
      * transition. These values determine that factor.
@@ -234,6 +238,36 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         ((RippleDrawable) getBackground()).setForceSoftware(true);
         ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
         ((RippleDrawable) mSystemIconsSuperContainer.getBackground()).setForceSoftware(true);
+        mStatusBarHeaderView = this;
+
+        //ME
+        handleStatusBarHeaderViewBackround();
+    }
+
+    public static void handleStatusBarHeaderViewBackround() {
+
+        // continua ?
+        if (NotificationPanelView.mNotificationPanelView == null)
+            return;
+
+        // obtém os campos
+        boolean mKeyguardShowing = NotificationPanelView.mKeyguardShowing;
+
+        // continua ?
+        if (mStatusBarHeaderView == null)
+            return;
+
+        if (mKeyguardShowing) {
+
+            // opaco !
+            mStatusBarHeaderView.getBackground().setAlpha(255);
+
+        } else {
+
+            // transparente ?
+            mStatusBarHeaderView.getBackground().setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
+
+        }
     }
 
     @Override
@@ -760,6 +794,18 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mTime.setScaleY(1f);
         }
         updateAmPmTranslation();
+    }
+
+    public static void updatePreferences(Context mContext) {
+
+        // atualiza
+        mTranslucentHeader = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.TRANSLUCENT_HEADER_PREFERENCE_KEY, 1) == 1);
+        mTranslucencyPercentage =  Settings.System.getInt(mContext.getContentResolver(), Settings.System.TRANSLUCENTCYCY_PRECENTAGE_PREFERENCE_KEY, 70);
+        mTranslucencyPercentage = 255 - ((mTranslucencyPercentage * 255) / 100);
+
+        // transparente ?
+        handleStatusBarHeaderViewBackround();
+
     }
 
     public void setEditing(boolean editing) {

@@ -3405,6 +3405,38 @@ public final class Settings {
         public static final Validator POINTER_SPEED_VALIDATOR =
                 new InclusiveFloatRangeValidator(-7, 7);
 
+
+
+// AAAHH
+	public static final String BLURRED_SYSTEM_UI_UPDATE_INTENT = "serajr.blurred.system.ui.lp.UPDATE_PREFERENCES";
+	
+	public static final String STATUS_BAR_EXPANDED_ENABLED_PREFERENCE_KEY = "hook_system_ui_blurred_status_bar_expanded_enabled_pref";
+	
+	public static final String RECENT_APPS_ENABLED_PREFERENCE_KEY = "hook_system_ui_blurred_recent_app_enabled_pref";
+	
+	public static final String BLUR_SCALE_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_scale_pref";
+	
+	public static final String BLUR_RADIUS_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_radius_pref";
+	
+	public static final String BLUR_LIGHT_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_light_color_pref";
+	
+	public static final String BLUR_MIXED_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_mixed_color_pref";
+	
+	public static final String BLUR_DARK_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_dark_color_pref";
+	
+	public static final String TRANSLUCENT_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucency_percentage_pref";
+	// panel
+	public static final String TRANSLUCENTCY_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucentcy_percentage_pref";
+        //status bar??!
+	public static final String TRANSLUCENTCYCY_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucentcyt_percentage_pref";
+
+	public static final String TRANSLUCENT_HEADER_PREFERENCE_KEY = "hook_system_ui_translucent_header_pref";
+	
+	public static final String TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY = "hook_system_ui_translucent_quick_settings_pref";
+	
+	public static final String TRANSLUCENT_NOTIFICATIONS_PREFERENCE_KEY = "hook_system_ui_translucent_notifications_pref";
+
+
         /**
          * Show icon when stylus is used?
          * 0 = no

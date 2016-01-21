@@ -19,6 +19,7 @@ package com.android.systemui.recents;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SearchManager;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
@@ -26,13 +27,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
@@ -51,10 +59,15 @@ import com.android.systemui.recents.views.DebugOverlayView;
 import com.android.systemui.recents.views.RecentsView;
 import com.android.systemui.recents.views.SystemBarScrimViews;
 import com.android.systemui.recents.views.ViewAnimation;
+import com.android.systemui.statusbar.BlurUtils;
+import com.android.systemui.statusbar.DisplayUtils;
+import com.android.systemui.statusbar.phone.NotificationPanelView;
 import cyanogenmod.providers.CMSettings;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The main Recents activity that is started from AlternateRecentsComponent.
@@ -63,6 +76,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         RecentsAppWidgetHost.RecentsAppWidgetHostCallbacks,
         DebugOverlayView.DebugOverlayViewCallbacks {
 
+    private static final HashMap<String, Field> fieldCache = new HashMap<String, Field>();
     RecentsConfiguration mConfig;
     long mLastTabKeyEventTime;
 
@@ -73,6 +87,21 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     ViewStub mDebugOverlayStub;
     View mEmptyView;
     DebugOverlayView mDebugOverlay;
+
+    //ME
+    public static boolean mBlurredRecentAppsEnabled;
+
+    private static int mBlurScale;
+    private static int mBlurRadius;
+    private static Context mContext;
+    private static BlurUtils mBlurUtils;
+    private static ColorFilter mColorFilter;
+    private static int mBlurDarkColorFilter;
+    private static int mBlurMixedColorFilter;
+    private static int mBlurLightColorFilter;
+    private static RecentsActivity mRecentsActivity;
+    private static FrameLayout mRecentsActivityRootView;
+    //ME
 
     // Resize task debug
     RecentsResizeTaskDialog mResizeTaskDebugDialog;
@@ -87,6 +116,261 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
 
     // Runnable to be executed after we paused ourselves
     Runnable mAfterPauseRunnable;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public static void startBlurTask() {
+
+        // remove o background !
+        if (mRecentsActivityRootView != null)
+            mRecentsActivityRootView.setBackground(null);
+
+        // habilitado ?
+        if (!mBlurredRecentAppsEnabled)
+            return;
+
+        // callback
+        BlurTask.setBlurTaskCallback(new BlurUtils.BlurTaskCallback() {
+
+            @Override
+            public void blurTaskDone(final Bitmap blurredBitmap) {
+
+                if (blurredBitmap != null) {
+
+                    // -------------------------
+                    // bitmap criado com sucesso
+                    // -------------------------
+
+                    if (mRecentsActivityRootView != null) {
+
+                        mRecentsActivityRootView.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                // cria o drawable com o filtro de cor
+                                BitmapDrawable blurredDrawable = new BitmapDrawable(blurredBitmap);
+                                blurredDrawable.setColorFilter(mColorFilter);
+
+                                // seta
+                                mRecentsActivityRootView.setBackground(blurredDrawable);
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void dominantColor(int color) {
+
+                // obtém a luminosidade da cor dominante
+                double lightness = DisplayUtils.getColorLightness(color);
+
+                if (lightness >= 0.0 && color <= 1.0) {
+
+                    // --------------------------------------------------
+                    // seta o filtro de cor de acordo com a cor dominante
+                    // --------------------------------------------------
+
+                    if (lightness <= 0.33) {
+
+                        // imagem clara (mais perto do branco)
+                        mColorFilter = new PorterDuffColorFilter(mBlurLightColorFilter, PorterDuff.Mode.MULTIPLY);
+
+                    } else if (lightness >= 0.34 && lightness <= 0.66) {
+
+                        // imagem mista
+                        mColorFilter = new PorterDuffColorFilter(mBlurMixedColorFilter, PorterDuff.Mode.MULTIPLY);
+
+                    } else if (lightness >= 0.67 && lightness <= 1.0) {
+
+                        // imagem clara (mais perto do preto)
+                        mColorFilter = new PorterDuffColorFilter(mBlurDarkColorFilter, PorterDuff.Mode.MULTIPLY);
+
+                    }
+
+                } else {
+
+                    // -------
+                    // erro !!
+                    // -------
+
+                    // seta a cor mista
+                    mColorFilter = new PorterDuffColorFilter(mBlurMixedColorFilter, PorterDuff.Mode.MULTIPLY);
+
+                }
+            }
+        });
+
+        // engine
+        BlurTask.setBlurEngine(BlurUtils.BlurEngine.RenderScriptBlur);
+
+        // blur
+        new BlurTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+    }
+
+    public static void onConfigurationChanged() {
+
+        // -----------------
+        // alterou a rotação
+        // -----------------
+
+        // recicla
+      //  recycle();
+        RecentsActivity.startBlurTask();
+    }
+
+
+
+        public static class BlurTask extends AsyncTask<Void, Void, Bitmap> {
+
+            private static int[] mScreenDimens;
+            private static Bitmap mScreenBitmap;
+            private static BlurUtils.BlurEngine mBlurEngine;
+            private static BlurUtils.BlurTaskCallback mCallback;
+
+            public static void setBlurEngine(BlurUtils.BlurEngine blurEngine) {
+
+                mBlurEngine = blurEngine;
+
+            }
+
+            private Bitmap drawableToBitmap(Drawable drawable) {
+                Bitmap bitmap = null;
+                if (drawable instanceof BitmapDrawable) {
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+                    if(bitmapDrawable.getBitmap() != null) {
+                        return bitmapDrawable.getBitmap();
+                    }
+                }
+                if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                } else {
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                }
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+                return bitmap;
+            }
+
+            public static void setBlurTaskCallback(BlurUtils.BlurTaskCallback callBack) {
+
+                mCallback = callBack;
+
+            }
+
+            public static int[] getRealScreenDimensions() {
+
+                return mScreenDimens;
+
+            }
+
+            public static Bitmap getLastBlurredBitmap() {
+
+                return mScreenBitmap;
+
+            }
+
+            @Override
+            protected void onPreExecute() {
+
+                // obtém o tamamho real da tela
+                mScreenDimens = DisplayUtils.getRealScreenDimensions(mContext);
+
+                // obtém a screenshot da tela com escala reduzida
+                //mScreenBitmap = DisplayUtils.takeSurfaceScreenshot(mContext, mBlurScale);
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(mContext);
+                DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
+                float screenh = dm.heightPixels;
+                float screenw = dm.widthPixels;
+                float bmheight = screenh;
+                float bmwidth = screenw;
+                float bmratio = 1;
+                Bitmap bback = drawableToBitmap(wallpaperManager.getDrawable());
+                float bbh = bback.getHeight();
+                float bbw = bback.getWidth();
+                if (bmheight > bbh) {
+                    bmratio = bbh/bmheight;
+                    bmheight = (bmratio*screenh);
+                }
+                bmwidth = (bmwidth*bmratio);
+                if (bmwidth > bbw) {
+                    bmratio = bbw/screenw;
+                    bmwidth = (bmratio*screenw);
+                    bmheight = (bmratio*screenh);
+                }
+//                Bitmap mScreenBitmap2 = Bitmap.createBitmap(bback, (int)((screenw-(bbw-bmwidth))/2), (int)((screenh-(bbh-bmheight))/2), (int)bmwidth, (int)bmheight)
+                Bitmap mScreenBitmap2 = Bitmap.createBitmap(bback, 0, 0, (int)bmwidth, (int)bmheight);
+                mScreenBitmap = Bitmap.createScaledBitmap(
+                        mScreenBitmap2, (int)(bmwidth / 20), (int)(bmheight / 20), false);
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... arg0) {
+
+                try {
+
+                    // continua ?
+                    if (mScreenBitmap == null)
+                        return null;
+
+                    // calback
+                    mCallback.dominantColor(DisplayUtils.getDominantColorByPixelsSampling(mScreenBitmap, 10, 10));
+
+                    // blur engine
+                    if (mBlurEngine == BlurUtils.BlurEngine.RenderScriptBlur) {
+
+                        mScreenBitmap = mBlurUtils.renderScriptBlur(mScreenBitmap, mBlurRadius);
+
+                    } else if (mBlurEngine == BlurUtils.BlurEngine.StackBlur) {
+
+                        mScreenBitmap = mBlurUtils.stackBlur(mScreenBitmap, mBlurRadius);
+
+                    } else if (mBlurEngine == BlurUtils.BlurEngine.FastBlur) {
+
+                        mBlurUtils.fastBlur(mScreenBitmap, mBlurRadius);
+
+                    }
+
+                    return mScreenBitmap;
+
+                } catch (OutOfMemoryError e) {
+
+                    // erro
+                    return null;
+
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+
+                if (bitmap != null) {
+
+                    // -----------------------------
+                    // bitmap criado com sucesso !!!
+                    // -----------------------------
+
+                    // callback
+                    mCallback.blurTaskDone(bitmap);
+
+                } else {
+
+                    // --------------------------
+                    // erro ao criar o bitmap !!!
+                    // --------------------------
+
+                    // callback
+                    mCallback.blurTaskDone(null);
+
+                }
+            }
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * A common Runnable to finish Recents either by calling finish() (with a custom animation) or
@@ -190,6 +474,30 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     });
 
     /** Updates the set of recent tasks */
+
+    private static void recycle() {
+
+        if (mRecentsActivityRootView == null)
+            return;
+
+        // limpa e recicla
+        if (mRecentsActivityRootView.getBackground() != null) {
+
+            // recicla
+            Bitmap bitmap = ((BitmapDrawable) mRecentsActivityRootView.getBackground()).getBitmap();
+            if (bitmap != null) {
+
+                bitmap.recycle();
+                bitmap = null;
+
+            }
+
+            // limpa
+            mRecentsActivityRootView.setBackground(null);
+
+        }
+    }
+
     void updateRecentsTasks() {
         // If AlternateRecentsComponent has preloaded a load plan, then use that to prevent
         // reconstructing the task stack
@@ -392,6 +700,90 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED);
         registerReceiver(mSystemBroadcastReceiver, filter);
+//TODO: fuuuu
+        try {
+            // obtém os campos
+            RecentsView mRecentsView = (RecentsView) getObjectField(this, "mRecentsView");
+            
+            // guarda o layout parente do mRecentsView (root)
+            mRecentsActivityRootView = (FrameLayout) mRecentsView.getParent();
+
+            // obtém o último blurred bitmap
+            Bitmap lastBlurredBitmap = BlurTask.getLastBlurredBitmap();
+
+            // seta o background ?
+            if ((mBlurredRecentAppsEnabled) && (lastBlurredBitmap != null)) {
+
+                // cria o drawable com o filtro de cor
+                BitmapDrawable blurredDrawable = new BitmapDrawable(lastBlurredBitmap);
+                blurredDrawable.setColorFilter(mColorFilter);
+
+                // seta
+                mRecentsActivityRootView.setBackground(blurredDrawable);
+
+            }
+        } catch (Exception e){
+            Log.d("MANGO3", String.valueOf(e));
+        }
+    }
+
+    //#################################################################################################
+    public static Object getObjectField(Object obj, String fieldName) {
+        try {
+            return findField(obj.getClass(), fieldName).get(obj);
+        } catch (IllegalAccessException e) {
+            // should not happen
+            Log.d("MANGJAMJQ", String.valueOf(e));
+            throw new IllegalAccessError(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+    }
+
+
+    /**
+     * Look up a field in a class and set it to accessible. The result is cached.
+     * If the field was not found, a {@link NoSuchFieldError} will be thrown.
+     */
+    public static Field findField(Class<?> clazz, String fieldName) {
+        StringBuilder sb = new StringBuilder(clazz.getName());
+        sb.append('#');
+        sb.append(fieldName);
+        String fullFieldName = sb.toString();
+
+        if (fieldCache.containsKey(fullFieldName)) {
+            Field field = fieldCache.get(fullFieldName);
+            if (field == null)
+                throw new NoSuchFieldError(fullFieldName);
+            return field;
+        }
+
+        try {
+            Field field = findFieldRecursiveImpl(clazz, fieldName);
+            field.setAccessible(true);
+            fieldCache.put(fullFieldName, field);
+            return field;
+        } catch (NoSuchFieldException e) {
+            fieldCache.put(fullFieldName, null);
+            throw new NoSuchFieldError(fullFieldName);
+        }
+    }
+
+    private static Field findFieldRecursiveImpl(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            while (true) {
+                clazz = clazz.getSuperclass();
+                if (clazz == null || clazz.equals(Object.class))
+                    break;
+
+                try {
+                    return clazz.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException ignored) {}
+            }
+            throw e;
+        }
     }
 
     /** Inflates the debug overlay if debug mode is enabled. */
@@ -694,5 +1086,26 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     @Override
     public void onSecondarySeekBarChanged(float progress) {
         // Do nothing
+    }
+
+    public static void init(Context context) {
+
+        // guarda
+        mContext = context;
+
+        // inicia o BlurUtils
+        mBlurUtils = new BlurUtils(mContext);
+
+    }
+
+    public static void updatePreferences(Context mContext) {
+
+        // atualiza
+        mBlurScale = 20;
+        mBlurRadius = 3;
+        mBlurDarkColorFilter = Color.LTGRAY;
+        mBlurMixedColorFilter = Color.GRAY;
+        mBlurLightColorFilter = Color.DKGRAY;
+        mBlurredRecentAppsEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.RECENT_APPS_ENABLED_PREFERENCE_KEY, 1) == 1);
     }
 }
