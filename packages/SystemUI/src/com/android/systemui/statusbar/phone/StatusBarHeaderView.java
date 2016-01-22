@@ -244,6 +244,25 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         handleStatusBarHeaderViewBackround();
     }
 
+        Drawable d = getBackground();
+        if (d instanceof RippleDrawable) {
+            ((RippleDrawable) d).setForceSoftware(true);
+        }
+        d = mSettingsButton.getBackground();
+        if (d instanceof RippleDrawable) {
+            ((RippleDrawable) d).setForceSoftware(true);
+        }
+        d = mSystemIconsSuperContainer.getBackground();
+        if (d instanceof RippleDrawable) {
+            ((RippleDrawable) d).setForceSoftware(true);
+        mStatusBarHeaderView = this;
+
+        //ME
+        handleStatusBarHeaderViewBackround();
+        }
+    }
+
+
     public static void handleStatusBarHeaderViewBackround() {
 
         // continua ?
@@ -266,7 +285,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
             // transparente ?
             mStatusBarHeaderView.getBackground().setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
-
         }
     }
 
