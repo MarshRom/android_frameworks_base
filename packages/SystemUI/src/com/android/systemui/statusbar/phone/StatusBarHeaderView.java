@@ -235,15 +235,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
         // RenderThread is doing more harm than good when touching the header (to expand quick
         // settings), so disable it for this view
-        ((RippleDrawable) getBackground()).setForceSoftware(true);
-        ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
-        ((RippleDrawable) mSystemIconsSuperContainer.getBackground()).setForceSoftware(true);
-        mStatusBarHeaderView = this;
-
-        //ME
-        handleStatusBarHeaderViewBackround();
-    }
-
         Drawable d = getBackground();
         if (d instanceof RippleDrawable) {
             ((RippleDrawable) d).setForceSoftware(true);
@@ -255,11 +246,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         d = mSystemIconsSuperContainer.getBackground();
         if (d instanceof RippleDrawable) {
             ((RippleDrawable) d).setForceSoftware(true);
+        }
+
         mStatusBarHeaderView = this;
 
         //ME
         handleStatusBarHeaderViewBackround();
-        }
     }
 
 
@@ -285,6 +277,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
             // transparente ?
             mStatusBarHeaderView.getBackground().setAlpha(mTranslucentHeader ? mTranslucencyPercentage : 255);
+
         }
     }
 
