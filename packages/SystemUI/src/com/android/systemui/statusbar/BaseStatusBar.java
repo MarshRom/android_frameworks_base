@@ -258,6 +258,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     // to some other configuration change).
     protected ThemeConfig mCurrentTheme;
 
+    private static final HashMap<String, Field> fieldCache = new HashMap<String, Field>();
+
     @Override  // NotificationData.Environment
     public boolean isDeviceProvisioned() {
         return mDeviceProvisioned;
