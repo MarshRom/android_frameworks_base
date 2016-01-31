@@ -3436,6 +3436,7 @@ public final class Settings {
 	
 	public static final String TRANSLUCENT_NOTIFICATIONS_PREFERENCE_KEY = "hook_system_ui_translucent_notifications_pref";
 
+	public static final String STATUSBAR_EDITBUTTON_PREFERENCE_KEY = "hook_statusbar_editbutton_pref";
 
         /**
          * Show icon when stylus is used?
