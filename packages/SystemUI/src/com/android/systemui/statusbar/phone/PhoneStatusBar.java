@@ -405,7 +405,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mDisabled1 = 0;
     int mDisabled2 = 0;
 
-    boolean mEditButton = true;
+    boolean static mEditButton = true;
 
     // tracking calls to View.setSystemUiVisibility()
     int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
