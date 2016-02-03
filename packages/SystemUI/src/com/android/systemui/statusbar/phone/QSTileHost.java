@@ -120,6 +120,8 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     private Callback mCallback;
 
+    boolean mEditButton = true;
+
     public QSTileHost(Context context, PhoneStatusBar statusBar,
             BluetoothController bluetooth, LocationController location,
             RotationLockController rotation, NetworkController network,
@@ -392,6 +394,9 @@ public class QSTileHost implements QSTile.Host, Tunable {
             }
         }
         // ensure edit tile is present
+        if (!mEditButton) {
+            return tiles;
+        }
         if (tiles.size() < TILES_PER_PAGE && !tiles.contains("edit")) {
             tiles.add("edit");
         } else if (tiles.size() > TILES_PER_PAGE && !tiles.contains("edit")) {
@@ -528,4 +533,15 @@ public class QSTileHost implements QSTile.Host, Tunable {
     public CustomTileData getCustomTileData() {
         return mCustomTileData;
     }
+
+
+    public static void updatePreferences(Context mContext) {
+        mEditButton = (Settings.System.getInt(context.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        try {
+            remove("edit");
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
 }

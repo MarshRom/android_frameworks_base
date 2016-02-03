@@ -1335,50 +1335,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    if (NotificationPanelView.mKeyguardShowing) {
+                    if (StatusBarState.SHADE) {
                         return;
                     }
 
                     String action = intent.getAction();
 
-                    // alterou a rotação ?
-               if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
-                        if (NotificationPanelView.mKeyguardShowing) {
+                    if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
+                        if (StatusBarState.SHADE) {
                             return;
                         }
-                        // recents
                         RecentsActivity.onConfigurationChanged();
 
-                        // ----------------------------------------------------------------------
-                        // se na rotação do celular o mod estiver habilitado e o painel expandido
-                        // estiver aberto, fecha o painel expandido forçando o usuário a expandir
-                        // o painel novamente para obtér a imagem desfocada com a rotação atual!!
-                        // ----------------------------------------------------------------------
-
-                        // habilitado ?
-                        if (mExpandedVisible && NotificationPanelView.mBlurredStatusBarExpandedEnabled && (!NotificationPanelView.mKeyguardShowing)) {
-
+                        if (mExpandedVisible && NotificationPanelView.mBlurredStatusBarExpandedEnabled && (!StatusBarState.SHADE)) {
                             // fecha o painel
                             makeExpandedInvisible();
 
                         }
                     }
-
-       //             if (action.equals(Intent.ACTION_SCREEN_OFF)) {
-         //               NotificationPanelView.recycle();
-           //         }
-
-                    // atualiza
-
-
-                    // mata
-
+                    if (action.equals("serajr.blurred.system.ui.lp.UPDATE_PREFERENCES")) {
+                        updatePreferences(this.mContext);
+                    }
                 }
             };
 
             // registra o receiver
             IntentFilter intent = new IntentFilter();
             intent.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+            intent.addAction("serajr.blurred.system.ui.lp.UPDATE_PREFERENCES");
             this.mContext.registerReceiver(receiver, intent);
 
             // inicia
