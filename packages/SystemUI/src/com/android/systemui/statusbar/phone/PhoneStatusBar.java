@@ -1335,19 +1335,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    if (StatusBarState.SHADE) {
+                    if (NotificationPanelView.mKeyguardShowing) {
                         return;
                     }
 
                     String action = intent.getAction();
 
                     if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
-                        if (StatusBarState.SHADE) {
+                        if (NotificationPanelView.mKeyguardShowing) {
                             return;
                         }
                         RecentsActivity.onConfigurationChanged();
 
-                        if (mExpandedVisible && NotificationPanelView.mBlurredStatusBarExpandedEnabled && (!StatusBarState.SHADE)) {
+                        if (mExpandedVisible && NotificationPanelView.mBlurredStatusBarExpandedEnabled && (!NotificationPanelView.mKeyguardShowing)) {
                             // fecha o painel
                             makeExpandedInvisible();
 
