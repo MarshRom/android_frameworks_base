@@ -120,7 +120,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     private Callback mCallback;
 
-    boolean mEditButton = true;
+    static boolean mEditButton = true;
 
     public QSTileHost(Context context, PhoneStatusBar statusBar,
             BluetoothController bluetooth, LocationController location,
