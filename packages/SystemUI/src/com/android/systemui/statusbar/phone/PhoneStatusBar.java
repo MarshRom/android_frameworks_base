@@ -1354,7 +1354,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         }
                     }
                     if (action.equals("serajr.blurred.system.ui.lp.UPDATE_PREFERENCES")) {
-                        updatePreferences(this.mContext);
+                        updatePreferences(context);
                     }
                 }
             };

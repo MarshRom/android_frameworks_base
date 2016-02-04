@@ -393,6 +393,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
                 tiles.add(tile);
             }
         }
+        updatePreferences(getContext());
         // ensure edit tile is present
         if (!mEditButton) {
             return tiles;
