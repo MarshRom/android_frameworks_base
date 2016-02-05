@@ -1387,7 +1387,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         NotificationBackgroundView.updatePreferences(context);
         StatusBarHeaderView.updatePreferences(context);
         BaseStatusBar.updatePreferences();
-        mEditButton = (Settings.System.getInt(context.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
     }
 
     private void clearAllNotifications() {

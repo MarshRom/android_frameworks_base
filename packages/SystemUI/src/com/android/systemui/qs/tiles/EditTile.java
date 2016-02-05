@@ -20,6 +20,7 @@ import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import org.cyanogenmod.internal.logging.CMMetricsLogger;
+import android.provider.Settings;
 
 public class EditTile extends QSTile<QSTile.BooleanState> implements KeyguardMonitor.Callback {
 

@@ -120,7 +120,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     private Callback mCallback;
 
-    static boolean mEditButton = true;
+    public static boolean mEditButton = true;
 
     public QSTileHost(Context context, PhoneStatusBar statusBar,
             BluetoothController bluetooth, LocationController location,
@@ -537,9 +537,12 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
 
     public static void updatePreferences(Context mContext) {
-        mEditButton = (Settings.System.getInt(context.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         try {
-            remove("edit");
+            MetricsLogger.action(getContext(), MetricsLogger.TUNER_QS_REMOVE, "edit");
+            List<String> tiles = new ArrayList<>(mTileSpecs);
+            tiles.remove("edit");
+            setTiles(tiles);
         } catch (Throwable e) {
             e.printStackTrace();
         }
