@@ -405,7 +405,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mDisabled1 = 0;
     int mDisabled2 = 0;
 
-    boolean static mEditButton = true;
+    public static boolean mEditButton = true;
 
     // tracking calls to View.setSystemUiVisibility()
     int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
@@ -1191,6 +1191,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (mState != StatusBarState.SHADE) {
                         return;
                     }
+                    updatePreference(mContext);
                     if (!mEditButton) {
                         return;
                     }
@@ -1213,6 +1214,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (mState != StatusBarState.SHADE) {
                         return;
                     }
+                    updatePreference(mContext);
                     if (!mEditButton) {
                         return;
                     }
@@ -1385,6 +1387,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         NotificationBackgroundView.updatePreferences(context);
         StatusBarHeaderView.updatePreferences(context);
         BaseStatusBar.updatePreferences();
+        mEditButton = (Settings.System.getInt(context.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+    }
+
+    public static void updatePreference(Context context) {
+
         mEditButton = (Settings.System.getInt(context.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
     }
 
