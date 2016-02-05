@@ -57,7 +57,7 @@ public class EditTile extends QSTile<QSTile.BooleanState> implements KeyguardMon
         final boolean showing = getHost().getKeyguardMonitor().isShowing();
         final boolean secure = getHost().getKeyguardMonitor().isSecure();
         state.visible = !showing || !secure;
-        state.enabled = !showing;
+        state.enabled = ((!showing) && (!((Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1))));
         state.label = mContext.getString(R.string.quick_settings_edit_label);
 
         if (arg instanceof Boolean) {
