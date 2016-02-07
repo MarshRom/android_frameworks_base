@@ -406,7 +406,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         return tiles;
     }
 
-    public static void remove(String tile) {
+    public void remove(String tile) {
         MetricsLogger.action(getContext(), MetricsLogger.TUNER_QS_REMOVE, tile);
         List<String> tiles = new ArrayList<>(mTileSpecs);
         tiles.remove(tile);
