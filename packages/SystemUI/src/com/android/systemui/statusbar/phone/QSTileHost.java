@@ -101,7 +101,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
     private final Context mContext;
     private final PhoneStatusBar mStatusBar;
     private final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
-    protected final ArrayList<String> mTileSpecs = new ArrayList<>();
+    protected static final ArrayList<String> mTileSpecs = new ArrayList<>();
     private final BluetoothController mBluetooth;
     private final LocationController mLocation;
     private final RotationLockController mRotation;
@@ -406,8 +406,15 @@ public class QSTileHost implements QSTile.Host, Tunable {
         return tiles;
     }
 
-    public void remove(String tile) {
+    public static void remove(String tile) {
         MetricsLogger.action(getContext(), MetricsLogger.TUNER_QS_REMOVE, tile);
+        List<String> tiles = new ArrayList<>(mTileSpecs);
+        tiles.remove(tile);
+        setTiles(tiles);
+    }
+
+    public static void remove(String tile, Context context) {
+        MetricsLogger.action(context, MetricsLogger.TUNER_QS_REMOVE, tile);
         List<String> tiles = new ArrayList<>(mTileSpecs);
         tiles.remove(tile);
         setTiles(tiles);
@@ -538,6 +545,11 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     public static void updatePreferences(Context mContext) {
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        try {
+            remove("edit", mContext);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
 }
