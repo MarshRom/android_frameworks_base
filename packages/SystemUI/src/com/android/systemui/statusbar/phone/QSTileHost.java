@@ -413,15 +413,21 @@ public class QSTileHost implements QSTile.Host, Tunable {
         setTiles(tiles);
     }
 
-    public static void remove(String tile, Context context) {
+    public static void removeet(String tile, Context context) {
         MetricsLogger.action(context, MetricsLogger.TUNER_QS_REMOVE, tile);
         List<String> tiles = new ArrayList<>(mTileSpecs);
         tiles.remove(tile);
-        setTiles(tiles);
+        setTileset(tiles, context);
     }
 
     public void setTiles(List<String> tiles) {
         CMSettings.Secure.putStringForUser(getContext().getContentResolver(),
+                CMSettings.Secure.QS_TILES,
+                TextUtils.join(",", tiles), ActivityManager.getCurrentUser());
+    }
+
+    public static void setTileset(List<String> tiles, Context context) {
+        CMSettings.Secure.putStringForUser(context.getContentResolver(),
                 CMSettings.Secure.QS_TILES,
                 TextUtils.join(",", tiles), ActivityManager.getCurrentUser());
     }
@@ -546,7 +552,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
     public static void updatePreferences(Context mContext) {
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         try {
-            remove("edit", mContext);
+            removeet("edit", mContext);
         } catch (Throwable e) {
             e.printStackTrace();
         }
