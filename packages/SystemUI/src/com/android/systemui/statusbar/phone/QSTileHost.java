@@ -551,11 +551,14 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     public static void updatePreferences(Context mContext) {
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
-        try {
-            removeet("edit", mContext);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        if (mEditButton) {
+            try {
+                removeet("edit", mContext);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else {
+            tiles.add("edit");
         }
     }
-
 }
