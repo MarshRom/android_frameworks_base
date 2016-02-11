@@ -26,7 +26,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -34,7 +33,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +44,6 @@ import android.widget.Toast;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
-import com.android.systemui.recents.RecentsConfiguration;
 import com.android.systemui.recents.misc.Console;
 import com.android.systemui.recents.misc.DebugTrigger;
 import com.android.systemui.recents.misc.ReferenceCountedTrigger;
@@ -417,7 +414,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     /**
      * Broadcast receiver to handle messages from AlternateRecentsComponent.
      */
-    private final BroadcastReceiver mServiceBroadcastReceiver = new BroadcastReceiver() {
+    final BroadcastReceiver mServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -447,7 +444,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     /**
      * Broadcast receiver to handle messages from the system
      */
-    private final BroadcastReceiver mSystemBroadcastReceiver = new BroadcastReceiver() {
+    final BroadcastReceiver mSystemBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -466,7 +463,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     /**
      * A custom debug trigger to listen for a debug key chord.
      */
-    private final DebugTrigger mDebugTrigger = new DebugTrigger(new Runnable() {
+    final DebugTrigger mDebugTrigger = new DebugTrigger(new Runnable() {
         @Override
         public void run() {
             onDebugModeTriggered();
@@ -572,27 +569,14 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyView.setOnClickListener(null);
             }
-            boolean showSearchBar = CMSettings.System.getInt(getContentResolver(),
-                       CMSettings.System.RECENTS_SHOW_SEARCH_BAR, 1) == 1;
-
-            if (mRecentsView.hasValidSearchBar()) {
-                if (showSearchBar) {
+            if (!mConfig.searchBarEnabled) {
+                mRecentsView.setSearchBarVisibility(View.GONE);
+            } else {
+                if (mRecentsView.hasValidSearchBar()) {
                     mRecentsView.setSearchBarVisibility(View.VISIBLE);
                 } else {
-                    mRecentsView.setSearchBarVisibility(View.GONE);
-                }
-            } else {
-                if (showSearchBar) {
                     refreshSearchWidgetView();
                 }
-            }
-
-            // Update search bar space height
-            if (showSearchBar) {
-                mConfig.searchBarSpaceHeightPx = getResources().getDimensionPixelSize(
-                    R.dimen.recents_search_bar_space_height);
-            } else {
-                mConfig.searchBarSpaceHeightPx = 0;
             }
         }
 
