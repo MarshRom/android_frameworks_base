@@ -405,8 +405,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mDisabled1 = 0;
     int mDisabled2 = 0;
 
-    public boolean mEditButton = true;
-
     // tracking calls to View.setSystemUiVisibility()
     int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
 
@@ -1191,10 +1189,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (mState != StatusBarState.SHADE) {
                         return;
                     }
-                    mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
-                    if (!mEditButton) {
-                        return;
-                    }
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -1212,10 +1206,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 @Override
                 public void goToSettingsPage() {
                     if (mState != StatusBarState.SHADE) {
-                        return;
-                    }
-                    mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
-                    if (!mEditButton) {
                         return;
                     }
                     setEditing(true);

@@ -20,7 +20,6 @@ import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import org.cyanogenmod.internal.logging.CMMetricsLogger;
-import android.provider.Settings;
 
 public class EditTile extends QSTile<QSTile.BooleanState> implements KeyguardMonitor.Callback {
 
@@ -58,7 +57,7 @@ public class EditTile extends QSTile<QSTile.BooleanState> implements KeyguardMon
         final boolean showing = getHost().getKeyguardMonitor().isShowing();
         final boolean secure = getHost().getKeyguardMonitor().isSecure();
         state.visible = !showing || !secure;
-        state.enabled = ((!showing) && (!((Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1))));
+        state.enabled = (!showing);
         state.label = mContext.getString(R.string.quick_settings_edit_label);
 
         if (arg instanceof Boolean) {
