@@ -395,7 +395,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
                 tiles.add(tile);
             }
         }
-        updatePreferences(getContext());
+        // updatePreferences(getContext());
         // ensure edit tile is present
         if (mEditButton) {
             return tiles;
