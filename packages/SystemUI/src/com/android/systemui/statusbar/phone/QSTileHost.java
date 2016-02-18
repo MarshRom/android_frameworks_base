@@ -422,6 +422,13 @@ public class QSTileHost implements QSTile.Host, Tunable {
         setTileset(tiles, context);
     }
 
+
+    public static void addet(String tile, Context context) {
+        List<String> tiles = new ArrayList<>(mTileSpecs);
+        tiles.add(tile);
+        setTileset(tiles, context);
+    }
+
     public void setTiles(List<String> tiles) {
         CMSettings.Secure.putStringForUser(getContext().getContentResolver(),
                 CMSettings.Secure.QS_TILES,
@@ -562,7 +569,11 @@ public class QSTileHost implements QSTile.Host, Tunable {
                 e.printStackTrace();
             }
         } else {
-            tiles.add("edit");
+            try {
+                addet("edit", mContext);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 }
