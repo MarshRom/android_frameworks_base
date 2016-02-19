@@ -397,7 +397,10 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
         // updatePreferences(getContext());
         // ensure edit tile is present
+        // I DONT LIKE THIS AT ALL, checking to much?
+        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         if (mEditButton) {
+            tiles.remove(tile);
             return tiles;
         }
         if (tiles.size() < TILES_PER_PAGE && !tiles.contains("edit")) {
