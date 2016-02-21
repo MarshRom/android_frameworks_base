@@ -400,7 +400,9 @@ public class QSTileHost implements QSTile.Host, Tunable {
         // I DONT LIKE THIS AT ALL, checking to much?
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         if (mEditButton) {
-            tiles.remove(tile);
+            if (tiles.contains("edit")) {
+                tiles.remove("edit");
+            }
             return tiles;
         }
         if (tiles.size() < TILES_PER_PAGE && !tiles.contains("edit")) {
@@ -567,13 +569,17 @@ public class QSTileHost implements QSTile.Host, Tunable {
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         if (mEditButton) {
             try {
-                removeet("edit", mContext);
+                if (tiles.contains("edit")) {
+                    removeet("edit", mContext);
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                addet("edit", mContext);
+                if (!tiles.contains("edit")) {
+                    addet("edit", mContext);
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
