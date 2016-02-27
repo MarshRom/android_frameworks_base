@@ -119,7 +119,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
     private CustomTileData mCustomTileData;
     private CustomTileListenerService mCustomTileListenerService;
 
-    private Callback mCallback;
+    private static Callback mCallback;
 
     public static boolean mEditButton = true;
 
@@ -173,7 +173,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
     }
 
     @Override
-    public void setCallback(Callback callback) {
+    public static void setCallback(Callback callback) {
         mCallback = callback;
     }
 
