@@ -233,8 +233,8 @@ public class WindowAnimator {
 
         final WindowList windows = mService.getWindowListLocked(displayId);
 
-        final boolean seeThrough = CMSettings.System.getBoolean(mContext.getContentResolver(),
-                CMSettings.System.LOCKSCREEN_SEE_THROUGH, false);
+        final boolean seeThrough = (CMSettings.System.getBoolean(mContext.getContentResolver(),
+                CMSettings.System.LOCKSCREEN_SEE_THROUGH, 0) == 1);
 
         if (mKeyguardGoingAway && !mBlurUiEnabled && !seeThrough) {
             for (int i = windows.size() - 1; i >= 0; i--) {
