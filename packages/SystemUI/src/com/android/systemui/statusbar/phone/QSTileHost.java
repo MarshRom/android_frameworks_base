@@ -564,29 +564,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
     }
 
-    void addCustomTilem(String key) {
-        synchronized (mTiles) {
-            if (!mTiles.containsKey(key)) {
-                mTileSpecs.add(key);
-                mTiles.put(key);
-                if (mCallback != null) {
-                    mCallback.onTilesChanged();
-                }
-        }
-    }
-
-    void removeCustomTileSysUim(String key) {
-        synchronized (mTiles) {
-            if (mTiles.containsKey(key)) {
-                mTileSpecs.remove(key);
-                mTiles.remove(key);
-                if (mCallback != null) {
-                    mCallback.onTilesChanged();
-                }
-            }
-        }
-    }
-
     public CustomTileData getCustomTileData() {
         return mCustomTileData;
     }
@@ -596,16 +573,19 @@ public class QSTileHost implements QSTile.Host, Tunable {
         mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
         if (mEditButton) {
             try {
-                removeCustomTileSysUim("edit", mContext);
+                removeet("edit", mContext);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                addCustomTilem("edit", mContext);
+                addet("edit", mContext);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+        }
+        if (mCallback != null) {
+            mCallback.onTilesChanged();
         }
     }
 }
