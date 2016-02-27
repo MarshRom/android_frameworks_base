@@ -133,7 +133,6 @@ public class KeyguardStatusView extends GridLayout implements
         mWeatherIcon = (ImageView) findViewById(R.id.weather_image);
         mWeatherCity = (TextView) findViewById(R.id.city);
         mTemperatureText = (TextView) findViewById(R.id.temperature);
-        mLockPatternUtils = new LockPatternUtils(getContext());
         refresh();
         updateOwnerInfo();
 
