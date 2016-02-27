@@ -173,7 +173,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
     }
 
     @Override
-    public static void setCallback(Callback callback) {
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
