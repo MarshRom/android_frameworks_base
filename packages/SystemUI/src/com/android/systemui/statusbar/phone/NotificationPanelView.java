@@ -2958,9 +2958,9 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
                     CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED), false, this);
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
-                    CMSettings.Secure.BLUR_SCALE_PREFERENCE_KEY), false, this);
+                    CMSettings.Secure.STATUSBAR_BLUR_SCALE), false, this);
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
-                    CMSettings.Secure.BLUR_RADIUS_PREFERENCE_KEY), false, this);
+                    CMSettings.Secure.STATUSBAR_BLUR_RADIUS), false, this);
             update();
         }
 
@@ -2993,9 +2993,9 @@ public class NotificationPanelView extends PanelView implements
                 updateExternalKeyguardView();
             }
             mBlurScale = CMSettings.System.getInt(
-                    resolver, CMSettings.System.BLUR_SCALE_PREFERENCE_KEY, 10);
+                    resolver, CMSettings.System.STATUSBAR_BLUR_SCALE, 10);
             mBlurRadius = CMSettings.System.getInt(
-                    resolver, CMSettings.System.BLUR_RADIUS_PREFERENCE_KEY, 5);
+                    resolver, CMSettings.System.STATUSBAR_BLUR_RADIUS, 5);
         }
     }
 
