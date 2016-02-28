@@ -548,8 +548,6 @@ public class NotificationPanelView extends PanelView implements
     public static void updatePreferences(Context mContext) {
 
         // atualiza
-        mBlurScale = Settings.System.getInt(mContext.getContentResolver(), Settings.System.BLUR_SCALE_PREFERENCE_KEY, 10);
-        mBlurRadius = Settings.System.getInt(mContext.getContentResolver(), Settings.System.BLUR_RADIUS_PREFERENCE_KEY, 5);
         mBlurDarkColorFilter = Color.LTGRAY;
         mBlurMixedColorFilter = Color.GRAY;
         mBlurLightColorFilter = Color.DKGRAY;
@@ -2959,6 +2957,10 @@ public class NotificationPanelView extends PanelView implements
                     CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
                     CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED), false, this);
+            resolver.registerContentObserver(CMSettings.Secure.getUriFor(
+                    CMSettings.Secure.BLUR_SCALE_PREFERENCE_KEY), false, this);
+            resolver.registerContentObserver(CMSettings.Secure.getUriFor(
+                    CMSettings.Secure.BLUR_RADIUS_PREFERENCE_KEY), false, this);
             update();
         }
 
@@ -2990,6 +2992,10 @@ public class NotificationPanelView extends PanelView implements
                 mLiveLockScreenEnabled = liveLockScreenEnabled;
                 updateExternalKeyguardView();
             }
+            mBlurScale = CMSettings.System.getInt(
+                    resolver, CMSettings.System.BLUR_SCALE_PREFERENCE_KEY, 10);
+            mBlurRadius = CMSettings.System.getInt(
+                    resolver, CMSettings.System.BLUR_RADIUS_PREFERENCE_KEY, 5);
         }
     }
 
