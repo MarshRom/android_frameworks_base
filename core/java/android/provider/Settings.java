@@ -3260,20 +3260,6 @@ public final class Settings {
         /** @hide */
         public static final Validator WINDOW_ORIENTATION_LISTENER_LOG_VALIDATOR = sBooleanValidator;
 
-        public static final String LOCKSCREEN_SOUNDS_ENABLED = "lockscreen_sounds_enabled";
-
-        /** @hide */
-        public static final Validator LOCKSCREEN_SOUNDS_ENABLED_VALIDATOR = sBooleanValidator;
-
-        /**
-         * Whether the lockscreen should be completely disabled.
-         * @hide
-         */
-        public static final String LOCKSCREEN_DISABLED = "lockscreen.disabled";
-
-        /** @hide */
-        public static final Validator LOCKSCREEN_DISABLED_VALIDATOR = sBooleanValidator;
-
         /**
          * Whether to show the weather info on the lock screen
          * @hide
