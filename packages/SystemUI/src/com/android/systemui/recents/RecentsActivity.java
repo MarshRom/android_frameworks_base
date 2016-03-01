@@ -550,7 +550,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         }
 
         boolean enableShakeCleanByUser = Settings.System.getInt(getContentResolver(),
-            Settings.System.SHAKE_CLEAN_RECENT, 1) == 1;
+            Settings.System.SHAKE_TO_CLEAN_RECENT, 1) == 1;
 
         // Update the top level view's visibilities
         if (mConfig.launchedWithNoRecentTasks) {
