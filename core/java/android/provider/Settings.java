@@ -2501,6 +2501,19 @@ public final class Settings {
          * @hide
          */
         public static final String KEYBOARD_BRIGHTNESS = "keyboard_brightness";
+        
+        /**
+         *
+         * Shake to Clean recent
+         * @hide
+         */
+        public static final String SHAKE_TO_CLEAN_RECENT = "shake_to_clean_recent";
+
+        /**
+         * Shake to Clean notification
+         * @hide
+         */
+        public static final String SHAKE_TO_CLEAN_NOTIFICATION = "shake_to_clean_notification";
 
         /**
          * The button brightness to be used while the screen is on or after a button press,
