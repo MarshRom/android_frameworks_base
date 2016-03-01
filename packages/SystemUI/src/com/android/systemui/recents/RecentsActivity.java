@@ -57,6 +57,7 @@ import com.android.systemui.recents.views.DebugOverlayView;
 import com.android.systemui.recents.views.RecentsView;
 import com.android.systemui.recents.views.SystemBarScrimViews;
 import com.android.systemui.recents.views.ViewAnimation;
+import com.android.systemui.recents.views.TaskStackView;
 import com.android.systemui.statusbar.BlurUtils;
 import com.android.systemui.statusbar.DisplayUtils;
 import com.android.systemui.statusbar.phone.NotificationPanelView;
@@ -548,11 +549,15 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
             }
         }
 
+        boolean enableShakeCleanByUser = Settings.System.getInt(getContentResolver(),
+            Settings.System.SHAKE_CLEAN_RECENT, 1) == 1;
+
         // Update the top level view's visibilities
         if (mConfig.launchedWithNoRecentTasks) {
             if (mEmptyView == null) {
                 mEmptyView = mEmptyViewStub.inflate();
             }
+            TaskStackView.enableShake(false);
             mEmptyView.setVisibility(View.VISIBLE);
             mEmptyView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -566,6 +571,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView.setVisibility(View.GONE);
                 mEmptyView.setOnClickListener(null);
             }
+            TaskStackView.enableShake(true && enableShakeCleanByUser);
             if (!mConfig.searchBarEnabled) {
                 mRecentsView.setSearchBarVisibility(View.GONE);
             } else {

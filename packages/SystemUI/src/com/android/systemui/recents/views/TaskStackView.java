@@ -51,6 +51,7 @@ import com.android.systemui.recents.model.RecentsTaskLoader;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.recents.model.TaskStack;
 import com.android.systemui.statusbar.DismissView;
+import com.android.systemui.marshrom.ShakeSensorManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +64,7 @@ import java.util.List;
 /* The visual representation of a task stack view */
 public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCallbacks,
         TaskView.TaskViewCallbacks, TaskStackViewScroller.TaskStackViewScrollerCallbacks,
-        ViewPool.ViewPoolConsumer<TaskView, Task>, RecentsPackageMonitor.PackageCallbacks {
+        ViewPool.ViewPoolConsumer<TaskView, Task>, RecentsPackageMonitor.PackageCallbacks, ShakeSensorManager.ShakeListener {
 
     /** The TaskView callbacks */
     interface TaskStackViewCallbacks {
@@ -92,6 +93,7 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
     Rect mTaskStackBounds = new Rect();
     DismissView mDismissAllButton;
     boolean mDismissAllButtonAnimating;
+    static ShakeSensorManager mShakeSensorManager;
     int mFocusedTaskIndex = -1;
     int mPrevAccessibilityFocusedIndex = -1;
 
@@ -150,6 +152,23 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
             }
         });
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        mShakeSensorManager = new ShakeSensorManager(mContext, this);
+    }
+
+    @Override
+    public synchronized void onShake() {
+        enableShake(false);
+        mStack.removeAllTasks();
+    }
+
+    public static void enableShake(boolean enableShakeClean) {
+        if( mShakeSensorManager == null)
+            return;
+        if (enableShakeClean) {
+            mShakeSensorManager.enable(20);
+        } else {
+            mShakeSensorManager.disable();
+        }
     }
 
     /** Sets the callbacks */
