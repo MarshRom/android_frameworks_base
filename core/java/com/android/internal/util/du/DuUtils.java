@@ -32,8 +32,6 @@ public class DuUtils {
                Locale.CHINESE.getLanguage());
     }
 
-} 
-
     public static boolean deviceSupportsFlashLight(Context context) {
         CameraManager cameraManager = (CameraManager) context.getSystemService(
                 Context.CAMERA_SERVICE);
