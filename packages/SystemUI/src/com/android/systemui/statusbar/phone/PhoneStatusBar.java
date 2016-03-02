@@ -468,9 +468,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     CMSettings.Secure.RECENTS_LONG_PRESS_ACTIVITY), false, this);
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.LOCKSCREEN_BLUR_RADIUS), false, this);
-+            resolver.registerContentObserver(Settings.System.getUriFor(
-+                    Settings.System.SHAKE_TO_CLEAN_NOTIFICATION),
-+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SHAKE_TO_CLEAN_NOTIFICATION),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 

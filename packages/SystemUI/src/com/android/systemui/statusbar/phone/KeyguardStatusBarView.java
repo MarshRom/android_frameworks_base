@@ -130,8 +130,6 @@ public class KeyguardStatusBarView extends RelativeLayout {
             removeView(mMultiUserSwitch);
         }
         mBatteryLevel.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
-=======
 
         if (mCarrierLabel != null) {
             if (mShowCarrierLabel == 1) {
@@ -142,7 +140,6 @@ public class KeyguardStatusBarView extends RelativeLayout {
                 mCarrierLabel.setVisibility(View.GONE);
             }
         }
->>>>>>> 903f8bf... Show carrier label / custom & change color [1/2] [Squashed]
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -268,8 +265,4 @@ public class KeyguardStatusBarView extends RelativeLayout {
                 "status_bar_show_carrier"), false, mObserver);
     }
 
-    @Override
-    public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-    }
 }
