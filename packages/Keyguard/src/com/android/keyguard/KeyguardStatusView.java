@@ -313,6 +313,8 @@ public class KeyguardStatusView extends GridLayout implements
         mWeatherCity.setTextColor(primaryTextColor);
         mWeatherConditionText.setTextColor(primaryTextColor);
         mWeatherCurrentTemp.setTextColor(secondaryTextColor);
+        
+        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
 
         if (lockClockFont == 0) {
             mClockView.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
