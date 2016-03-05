@@ -80,6 +80,10 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
@@ -339,6 +343,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mScreenTurningOn;
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryTextView;
+
+    private ScriptIntrinsicBlur mScriptIntrinsicBlur;
+    private RenderScript mRenderScript;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -808,6 +815,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private RankingMap mLatestRankingMap;
     private boolean mNoAnimationOnNextBarModeChange;
 
+    public Bitmap renderScriptBlur(Bitmap bitmap, int radius) {
+
+        // não iniciado ?
+        if (mRenderScript == null)
+            return null;
+
+        Allocation input = Allocation.createFromBitmap(mRenderScript, bitmap, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+        Allocation output = Allocation.createTyped(mRenderScript, input.getType());
+        mScriptIntrinsicBlur.setRadius(radius);
+        mScriptIntrinsicBlur.setInput(input);
+        mScriptIntrinsicBlur.forEach(output);
+        output.copyTo(bitmap);
+
+        return bitmap;
+    }
+
     @Override
     public void start() {
         mDisplay = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE))
@@ -868,7 +891,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         WallpaperManager wallpaperManager = (WallpaperManager) mContext.getSystemService(
                 Context.WALLPAPER_SERVICE);
         mKeyguardWallpaper = wallpaperManager.getKeyguardBitmap();
-//TODO: BLUR
+
+        if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_BLUR_WALLPAPER, 1) == 1) {
+            mRenderScript = RenderScript.create(mContext);
+            mScriptIntrinsicBlur = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4 (mRenderScript));
+            mKeyguardWallpaper = renderScriptBlur(mKeyguardWallpaper, 25);
+            //TODO: BLUR
+        }
+
         mUnlockMethodCache = UnlockMethodCache.getInstance(mContext);
         mUnlockMethodCache.addListener(this);
         startKeyguard();
