@@ -2957,9 +2957,9 @@ public class NotificationPanelView extends PanelView implements
                     CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
             resolver.registerContentObserver(CMSettings.Secure.getUriFor(
                     CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED), false, this);
-            resolver.registerContentObserver(CMSettings.Secure.getUriFor(
+            resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.STATUSBAR_BLUR_SCALE), false, this);
-            resolver.registerContentObserver(CMSettings.Secure.getUriFor(
+            resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.STATUSBAR_BLUR_RADIUS), false, this);
             update();
         }
