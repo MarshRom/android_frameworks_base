@@ -101,7 +101,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     private final Context mContext;
     private final PhoneStatusBar mStatusBar;
-    private final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
     protected static final ArrayList<String> mTileSpecs = new ArrayList<>();
     private final BluetoothController mBluetooth;
     private final LocationController mLocation;
@@ -339,7 +339,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
     }
 
-    public static QSTile<?> createTile(String tileSpec) {
+    public QSTile<?> createTile(String tileSpec) {
         if (tileSpec.equals("wifi")) return new WifiTile(this);
         else if (tileSpec.equals("bt")) return new BluetoothTile(this);
         else if (tileSpec.equals("inversion")) return new ColorInversionTile(this);
@@ -568,7 +568,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         synchronized (mTiles) {
             if (!(mTiles.containsKey(key))) {
                 mTileSpecs.add(key);
-                mTiles.put(key, createTile(key));
+                mTiles.put(key, (new EditTile(this)));
                 if (mCallback != null) {
                     mCallback.onTilesChanged();
                 }
