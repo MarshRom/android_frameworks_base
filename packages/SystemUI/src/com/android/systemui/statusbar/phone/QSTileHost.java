@@ -332,44 +332,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
     }
 
-    public static void onTuningChangedaaahh() {
-        if (DEBUG) Log.d(TAG, "Recreating tiles");
-        final List<String> tileSpecs = loadTileSpecs(null);
-        if (tileSpecs.equals(mTileSpecs)) return;
-        for (Map.Entry<String, QSTile<?>> tile : mTiles.entrySet()) {
-            if (!tileSpecs.contains(tile.getKey()) && mCustomTileData.get(tile.getKey()) == null) {
-                if (DEBUG) Log.d(TAG, "Destroying tile: " + tile.getKey());
-                tile.getValue().destroy();
-            }
-        }
-        final LinkedHashMap<String, QSTile<?>> newTiles = new LinkedHashMap<>();
-        for (String tileSpec : tileSpecs) {
-            if (mTiles.containsKey(tileSpec)) {
-                newTiles.put(tileSpec, mTiles.get(tileSpec));
-            } else {
-                if (DEBUG) Log.d(TAG, "Creating tile: " + tileSpec);
-                try {
-                    if (mCustomTileData.get(tileSpec) != null) {
-                        newTiles.put(tileSpec, new CustomQSTile(this,
-                                mCustomTileData.get(tileSpec).sbc));
-                    } else {
-                        newTiles.put(tileSpec, createTile(tileSpec));
-                    }
-                } catch (Throwable t) {
-                    Log.w(TAG, "Error creating tile for spec: " + tileSpec, t);
-                }
-            }
-        }
-        mTileSpecs.clear();
-        mTileSpecs.addAll(tileSpecs);
-        mTiles.clear();
-        mTiles.putAll(newTiles);
-        if (mCallback != null) {
-            mCallback.onTilesChanged();
-        }
-    }
-
-
     @Override
     public void goToSettingsPage() {
         if (mCallback != null) {
@@ -377,7 +339,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
     }
 
-    public QSTile<?> createTile(String tileSpec) {
+    public static QSTile<?> createTile(String tileSpec) {
         if (tileSpec.equals("wifi")) return new WifiTile(this);
         else if (tileSpec.equals("bt")) return new BluetoothTile(this);
         else if (tileSpec.equals("inversion")) return new ColorInversionTile(this);
@@ -602,12 +564,41 @@ public class QSTileHost implements QSTile.Host, Tunable {
         }
     }
 
+    static void addTilee(String key) {
+        synchronized (mTiles) {
+            if (!(mTiles.containsKey(key))) {
+                mTileSpecs.add(key);
+                mTiles.put(key, createTile(key));
+                if (mCallback != null) {
+                    mCallback.onTilesChanged();
+                }
+            }
+        }
+    }
+
+    static void removeTileSysUii(String key) {
+        synchronized (mTiles) {
+            if (mTiles.containsKey(key)) {
+                mTileSpecs.remove(key);
+                mTiles.remove(key);
+                if (mCallback != null) {
+                    mCallback.onTilesChanged();
+                }
+            }
+        }
+    }
+
     public CustomTileData getCustomTileData() {
         return mCustomTileData;
     }
 
 
     public static void updatePreferences(Context mContext) {
-        onTuningChangedaaahh();
+        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        if (mEditButton) {
+            addTilee("edit");
+        } else {
+            removeTileSysUii("edit");
+        }
     }
 }
