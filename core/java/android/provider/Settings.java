@@ -3495,8 +3495,6 @@ public final class Settings {
 	public static final String RECENT_APPS_ENABLED_PREFERENCE_KEY = "hook_system_ui_blurred_recent_app_enabled_pref";
 	
 	public static final String BLUR_SCALE_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_scale_pref";
-
-	public static final String LOCKSCREEN_BLUR_WALLPAPER = "hook_system_ui_blurred_expanded_panel_scale_prefbababa";
 	
 	public static final String BLUR_RADIUS_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_radius_pref";
 	
