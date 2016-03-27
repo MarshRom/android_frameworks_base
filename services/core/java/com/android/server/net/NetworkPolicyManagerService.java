@@ -45,6 +45,8 @@ import static android.net.NetworkPolicyManager.FIREWALL_RULE_DENY;
 import static android.net.NetworkPolicyManager.POLICY_ALLOW_BACKGROUND_BATTERY_SAVE;
 import static android.net.NetworkPolicyManager.POLICY_NONE;
 import static android.net.NetworkPolicyManager.POLICY_REJECT_METERED_BACKGROUND;
+import static android.net.NetworkPolicyManager.POLICY_REJECT_ON_DATA;
+import static android.net.NetworkPolicyManager.POLICY_REJECT_ON_WLAN;
 import static android.net.NetworkPolicyManager.RULE_ALLOW_ALL;
 import static android.net.NetworkPolicyManager.RULE_REJECT_ALL;
 import static android.net.NetworkPolicyManager.RULE_REJECT_METERED;
@@ -203,6 +205,8 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
     private static final int VERSION_LATEST = VERSION_SWITCH_UID;
 
     @VisibleForTesting
+    public static final int TYPE_NONE = 0;
+    @VisibleForTesting
     public static final int TYPE_WARNING = 0x1;
     @VisibleForTesting
     public static final int TYPE_LIMIT = 0x2;
@@ -262,6 +266,9 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
     private INotificationManager mNotifManager;
     private PowerManagerInternal mPowerManagerInternal;
     private IDeviceIdleController mDeviceIdleController;
+
+    private final ComponentName mNotificationComponent;
+    private int mNotificationSequenceNumber;
 
     final Object mRulesLock = new Object();
 
@@ -364,6 +371,11 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         mPolicyFile = new AtomicFile(new File(systemDir, "netpolicy.xml"));
 
         mAppOps = context.getSystemService(AppOpsManager.class);
+
+        final String notificationComponent = context.getString(
+                R.string.config_networkPolicyNotificationComponent);
+        mNotificationComponent = notificationComponent != null
+                ? ComponentName.unflattenFromString(notificationComponent) : null;
     }
 
     public void bindConnectivityManager(IConnectivityManager connManager) {
@@ -776,6 +788,11 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         final ArraySet<String> beforeNotifs = new ArraySet<String>(mActiveNotifs);
         mActiveNotifs.clear();
 
+        // increment the sequence number so custom components know
+        // this update is new
+        mNotificationSequenceNumber++;
+        boolean hasNotifications = false;
+
         // TODO: when switching to kernel notifications, compute next future
         // cycle boundary to recompute notifications.
 
@@ -792,6 +809,7 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
             final long totalBytes = getTotalBytes(policy.template, start, end);
 
             if (policy.isOverLimit(totalBytes)) {
+                hasNotifications = true;
                 if (policy.lastLimitSnooze >= start) {
                     enqueueNotification(policy, TYPE_LIMIT_SNOOZED, totalBytes);
                 } else {
@@ -805,8 +823,16 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
                 if (policy.isOverWarning(totalBytes) && policy.lastWarningSnooze < start
                         && policy.limitBytes != LIMIT_DISABLED) {
                     enqueueNotification(policy, TYPE_WARNING, totalBytes);
+                    hasNotifications = true;
                 }
             }
+        }
+
+        // right now we don't care about restricted background notifications
+        // in the custom notification component, so trigger an update now
+        // if we didn't update anything this pass
+        if (!hasNotifications) {
+            sendNotificationToCustomComponent(null, TYPE_NONE, 0);
         }
 
         // ongoing notification when restricting background data
@@ -855,6 +881,12 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
      * {@link NetworkPolicy#limitBytes}, potentially showing dialog to user.
      */
     private void notifyOverLimitLocked(NetworkTemplate template) {
+        if (mNotificationComponent != null) {
+            // It is the job of the notification component to handle UI,
+            // so we do nothing here
+            return;
+        }
+
         if (!mOverLimitNotified.contains(template)) {
             mContext.startActivity(buildNetworkOverLimitIntent(template));
             mOverLimitNotified.add(template);
@@ -873,11 +905,55 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         return TAG + ":" + policy.template.hashCode() + ":" + type;
     }
 
+    private boolean sendNotificationToCustomComponent(
+            NetworkPolicy policy,
+            int type,
+            long totalBytes) {
+        if (mNotificationComponent == null) {
+            return false;
+        }
+
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        intent.setComponent(mNotificationComponent);
+
+        int notificationType = NetworkPolicyManager.NOTIFICATION_TYPE_NONE;
+        switch (type) {
+            case TYPE_WARNING:
+                notificationType = NetworkPolicyManager.NOTIFICATION_TYPE_USAGE_WARNING;
+                break;
+            case TYPE_LIMIT:
+                notificationType = NetworkPolicyManager.NOTIFICATION_TYPE_USAGE_REACHED_LIMIT;
+                break;
+            case TYPE_LIMIT_SNOOZED:
+                notificationType = NetworkPolicyManager.NOTIFICATION_TYPE_USAGE_EXCEEDED_LIMIT;
+                break;
+        }
+
+        intent.setAction(NetworkPolicyManager.ACTION_SHOW_NETWORK_POLICY_NOTIFICATION);
+        intent.putExtra(NetworkPolicyManager.EXTRA_NOTIFICATION_TYPE, notificationType);
+        intent.putExtra(
+                NetworkPolicyManager.EXTRA_NOTIFICATION_SEQUENCE_NUMBER,
+                mNotificationSequenceNumber);
+
+        if (notificationType != NetworkPolicyManager.NOTIFICATION_TYPE_NONE) {
+            intent.putExtra(NetworkPolicyManager.EXTRA_NETWORK_POLICY, policy);
+            intent.putExtra(NetworkPolicyManager.EXTRA_BYTES_USED, totalBytes);
+        }
+
+        mContext.sendBroadcast(intent);
+        return true;
+    }
+
     /**
      * Show notification for combined {@link NetworkPolicy} and specific type,
      * like {@link #TYPE_LIMIT}. Okay to call multiple times.
      */
     private void enqueueNotification(NetworkPolicy policy, int type, long totalBytes) {
+        if (sendNotificationToCustomComponent(policy, type, totalBytes)) {
+            return;
+        }
+
         final String tag = buildNotificationTag(policy, type);
         final Notification.Builder builder = new Notification.Builder(mContext);
         builder.setOnlyAlertOnce(true);
@@ -1737,6 +1813,19 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         }
     }
 
+    @Override
+    public void snoozeWarning(NetworkTemplate template) {
+        mContext.enforceCallingOrSelfPermission(MANAGE_NETWORK_POLICY, TAG);
+
+        final long token = Binder.clearCallingIdentity();
+        try {
+            // TODO: this seems like a race condition? (along with snoozeLimit above)
+            performSnooze(template, TYPE_WARNING);
+        } finally {
+            Binder.restoreCallingIdentity(token);
+        }
+    }
+
     void performSnooze(NetworkTemplate template, int type) {
         maybeRefreshTrustedTime();
         final long currentTime = currentTimeMillis();
@@ -2308,6 +2397,13 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         if (mFirewallChainStates.get(FIREWALL_CHAIN_STANDBY)
                 && mUidFirewallStandbyRules.get(uid, FIREWALL_RULE_DEFAULT) == FIREWALL_RULE_DENY) {
             uidRules = RULE_REJECT_ALL;
+        }
+
+        try {
+            mNetworkManager.restrictAppOnWlan(uid, (uidPolicy & POLICY_REJECT_ON_WLAN) != 0);
+            mNetworkManager.restrictAppOnData(uid, (uidPolicy & POLICY_REJECT_ON_DATA) != 0);
+        } catch (RemoteException e) {
+            // ignored; service lives in system_server
         }
 
         final int oldRules = mUidRules.get(uid);

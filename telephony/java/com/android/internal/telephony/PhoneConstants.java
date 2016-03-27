@@ -35,17 +35,17 @@ public class PhoneConstants {
         IDLE, RINGING, OFFHOOK;
     };
 
-   /**
-     * The state of a data connection.
-     * <ul>
-     * <li>CONNECTED = IP traffic should be available</li>
-     * <li>CONNECTING = Currently setting up data connection</li>
-     * <li>DISCONNECTED = IP not available</li>
-     * <li>SUSPENDED = connection is created but IP traffic is
-     *                 temperately not available. i.e. voice call is in place
-     *                 in 2G network</li>
-     * </ul>
-     */
+    /**
+      * The state of a data connection.
+      * <ul>
+      * <li>CONNECTED = IP traffic should be available</li>
+      * <li>CONNECTING = Currently setting up data connection</li>
+      * <li>DISCONNECTED = IP not available</li>
+      * <li>SUSPENDED = connection is created but IP traffic is
+      *                 temperately not available. i.e. voice call is in place
+      *                 in 2G network</li>
+      * </ul>
+      */
     public enum DataState {
         CONNECTED, CONNECTING, DISCONNECTED, SUSPENDED;
     };
@@ -86,6 +86,7 @@ public class PhoneConstants {
     public static final String NETWORK_UNAVAILABLE_KEY = "networkUnvailable";
     public static final String DATA_NETWORK_ROAMING_KEY = "networkRoaming";
     public static final String PHONE_IN_ECM_STATE = "phoneinECMState";
+    public static final String PHONE_IN_EMERGENCY_CALL = "phoneInEmergencyCall";
 
     public static final String REASON_LINK_PROPERTIES_CHANGED = "linkPropertiesChanged";
 
@@ -199,4 +200,7 @@ public class PhoneConstants {
     public static final int AUDIO_OUTPUT_ENABLE_SPEAKER = 0;
     public static final int AUDIO_OUTPUT_DISABLE_SPEAKER = 1;
     public static final int AUDIO_OUTPUT_DEFAULT = AUDIO_OUTPUT_ENABLE_SPEAKER;
+
+    /** Copied from ContactsCommon. See comments in ContactsCommon app for more detail. */
+    public static final String EXTRA_CALL_ORIGIN = "com.android.phone.CALL_ORIGIN";
 }
