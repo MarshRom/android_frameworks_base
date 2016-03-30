@@ -3624,32 +3624,11 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_LOCK_SCREEN = "double_tap_sleep_lock_screen";
 
         /**
-         * Change the color of the lockscreen owner's info text
-         *
-         * @hide
+         * IMPORTANT: If you add a new public settings you also have to add it to
+         * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
+         * it to PRIVATE_SETTINGS below. Also add a validator that can validate
+         * the setting value. See an example above.
          */
-        public static final String LOCKSCREEN_OWNER_INFO_COLOR = "lockscreen_owner_info_color";
-
-        /**
-         * Change the color of the lockscreen alarm text
-         *
-         * @hide
-         */
-        public static final String LOCKSCREEN_ALARM_COLOR = "lockscreen_alarm_color";
-
-        /**
-         * Change the color of the lockscreen clock
-         *
-         * @hide
-         */
-        public static final String LOCKSCREEN_CLOCK_COLOR = "lockscreen_clock_color";
-
-        /**
-         * Change the color of the lockscreen date underneath the clock
-         *
-         * @hide
-         */
-        public static final String LOCKSCREEN_CLOCK_DATE_COLOR = "lockscreen_clock_date_color";
 
         /** Network speed indicator
          * 0 = disabled
