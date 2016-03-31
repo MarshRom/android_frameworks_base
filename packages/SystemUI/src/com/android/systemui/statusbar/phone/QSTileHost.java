@@ -576,7 +576,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         synchronized (mTiles) {
             if (!(mTiles.containsKey(key))) {
                 mTileSpecs.add(key);
-                mTiles.put(key, (new EditTile(this)));
+            //    mTiles.put(key, (new EditTile(this)));
                 if (mCallback != null) {
                     mCallback.onTilesChanged();
                 }

@@ -337,11 +337,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-
-        mLockPatternUtils = new CmLockPatternUtils(getContext());
-        if (mLockPatternUtils.isThirdPartyKeyguardEnabled() && mLiveLockScreenEnabled) {
-            mThirdPartyKeyguardViewComponent = mLockPatternUtils.getThirdPartyKeyguardComponent();
-        }
         
             mNotificationPanelView = this;
 
