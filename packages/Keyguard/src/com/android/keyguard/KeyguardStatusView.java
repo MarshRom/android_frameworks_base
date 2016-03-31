@@ -158,7 +158,7 @@ public class KeyguardStatusView extends GridLayout implements
         super.onConfigurationChanged(newConfig);
         mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.widget_big_font_size));
-        mClockView.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+        mClockView.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
         mDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
         mOwnerInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -166,8 +166,8 @@ public class KeyguardStatusView extends GridLayout implements
     }
 
     private int getLockClockFont() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.LOCK_CLOCK_FONTS, 4, UserHandle.USER_CURRENT);
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_CLOCK_FONTS, 0);
     }
 
     public void refreshTime() {
