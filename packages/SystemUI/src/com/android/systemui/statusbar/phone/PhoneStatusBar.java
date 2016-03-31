@@ -179,6 +179,7 @@ import com.android.systemui.statusbar.policy.HotspotControllerImpl;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
+import com.android.systemui.statusbar.policy.LiveLockScreenController;
 import com.android.systemui.statusbar.policy.LocationControllerImpl;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl;
@@ -327,6 +328,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     WeatherControllerImpl mWeatherController;
     SuControllerImpl mSuController;
     FingerprintUnlockController mFingerprintUnlockController;
+    LiveLockScreenController mLiveLockScreenController;
 
     int mNaturalBarHeight = -1;
 
@@ -955,6 +957,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationPanel.setBackground(new FastColorDrawable(context.getColor(
                     R.color.notification_panel_solid_background)));
         }
+        mLiveLockScreenController = new LiveLockScreenController(mContext, this,
+                mNotificationPanel);
 
         if (mHeadsUpManager == null) {
             mHeadsUpManager = new HeadsUpManager(context, mStatusBarWindow);
@@ -2298,7 +2302,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         // apply user lockscreen image
-        if (backdropBitmap == null && !mNotificationPanel.hasExternalKeyguardView()) {
+        if (backdropBitmap == null && !mLiveLockScreenController.isShowingLiveLockScreenView()) {
             backdropBitmap = mKeyguardWallpaper;
         }
 
@@ -3867,6 +3871,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mKeyguardIndicationController != null) {
             mKeyguardIndicationController.cleanup();
         }
+        if (mLiveLockScreenController != null) {
+            mLiveLockScreenController.cleanup();
+        }
 
         mStatusBarWindow.removeContent(mStatusBarWindowContent);
         mStatusBarWindow.clearDisappearingChildren();
@@ -4425,8 +4432,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mDraggedDownRow = null;
         }
         mAssistManager.onLockscreenShown();
-        if (mNotificationPanel.hasExternalKeyguardView()) {
-            mNotificationPanel.getExternalKeyguardView().onKeyguardShowing(
+        if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
+            mLiveLockScreenController.getLiveLockScreenView().onKeyguardShowing(
                     mStatusBarKeyguardViewManager.isScreenTurnedOn());
         }
     }
@@ -4579,8 +4586,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationPanel.onAffordanceLaunchEnded();
         mNotificationPanel.animate().cancel();
         mNotificationPanel.setAlpha(1f);
-        if ( mNotificationPanel.getExternalKeyguardView() != null) {
-            mNotificationPanel.getExternalKeyguardView().onKeyguardDismissed();
+        if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
+            mLiveLockScreenController.getLiveLockScreenView().onKeyguardDismissed();
         }
         return staying;
     }
@@ -4670,6 +4677,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mIconPolicy.setKeyguardShowing(false);
         }
         mNotificationPanel.setBarState(mState, mKeyguardFadingAway, goingToFullShade);
+        mLiveLockScreenController.setBarState(mState);
         updateDozingState();
         updatePublicMode();
         updateStackScrollerState(goingToFullShade);
@@ -4758,7 +4766,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return false;
     }
 
-    protected void showBouncer() {
+    public void showBouncer() {
         if (!mRecreating &&
                 (mState == StatusBarState.KEYGUARD || mState == StatusBarState.SHADE_LOCKED)) {
             mWaitingForKeyguardExit = mStatusBarKeyguardViewManager.isShowing();
@@ -4767,15 +4775,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     protected void showBouncerOrFocusKeyguardExternalView() {
-        if (mNotificationPanel.hasExternalKeyguardView() && !isKeyguardShowingMedia() &&
-                mNotificationPanel.isExternalKeyguardViewInteractive()) {
+        if (mLiveLockScreenController.isShowingLiveLockScreenView() && !isKeyguardShowingMedia() &&
+                mLiveLockScreenController.isLiveLockScreenInteractive()) {
             focusKeyguardExternalView();
         } else {
             showBouncer();
         }
     }
 
-    protected void focusKeyguardExternalView() {
+    public void focusKeyguardExternalView() {
         mStatusBarView.collapseAllPanels(/*animate=*/ false, false /* delayed*/,
                 1.0f /* speedUpFactor */);
         mStatusBarKeyguardViewManager.setKeyguardExternalViewFocus(true);
@@ -4860,7 +4868,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void onTrackingStopped(boolean expand) {
         if (mState == StatusBarState.KEYGUARD || mState == StatusBarState.SHADE_LOCKED) {
             if (!expand && (!mUnlockMethodCache.canSkipBouncer() ||
-                    mNotificationPanel.hasExternalKeyguardView())) {
+                    mLiveLockScreenController.isShowingLiveLockScreenView())) {
                 showBouncerOrFocusKeyguardExternalView();
             }
         } else if (expand && mStatusBarWindowManager.keyguardExternalViewHasFocus()) {
@@ -5029,15 +5037,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mScreenTurningOn = false;
         mDozeScrimController.onScreenTurnedOn();
         mVisualizerView.setVisible(true);
-        if (mNotificationPanel.hasExternalKeyguardView()) {
-            mNotificationPanel.getExternalKeyguardView().onScreenTurnedOn();
+        if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
+            mLiveLockScreenController.getLiveLockScreenView().onScreenTurnedOn();
         }
     }
 
     public void onScreenTurnedOff() {
         mVisualizerView.setVisible(false);
-        if (mNotificationPanel.hasExternalKeyguardView()) {
-            mNotificationPanel.getExternalKeyguardView().onScreenTurnedOff();
+        if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
+            mLiveLockScreenController.getLiveLockScreenView().onScreenTurnedOff();
         }
     }
 
@@ -5459,6 +5467,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public VisualizerView getVisualizer() {
         return mVisualizerView;
+    }
+
+    public boolean isShowingLiveLockScreenView() {
+        return mLiveLockScreenController.isShowingLiveLockScreenView();
     }
 
     private final class ShadeUpdates {
