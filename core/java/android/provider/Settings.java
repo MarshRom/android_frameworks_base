@@ -3321,10 +3321,6 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_WEATHER_ICON_COLOR = "lock_screen_weather_icon_color";
 
-         /**
-         * @deprecated Use {@link android.provider.Settings.Global#POWER_SOUNDS_ENABLED}
-         * instead
-         */
         @Deprecated
         public static final String POWER_SOUNDS_ENABLED = Global.POWER_SOUNDS_ENABLED;
 
