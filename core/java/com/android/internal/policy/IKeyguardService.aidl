@@ -95,5 +95,9 @@ oneway interface IKeyguardService {
      * to start the keyguard dismiss sequence.
      */
     void onActivityDrawn();
+
     void setBackgroundBitmap(in Bitmap bmp);
+
+    void showKeyguard();
+
 }

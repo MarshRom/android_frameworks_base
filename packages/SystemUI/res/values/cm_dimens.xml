@@ -52,16 +52,12 @@
     <dimen name="qs_detail_item_height_twoline">72dp</dimen>
 
     <dimen name="detail_exterior_padding">8dp</dimen>
-
-    <!-- Size of unlock FAB used when showing external keyguard views -->
-    <dimen name="unlock_fab_size">48dp</dimen>
     
     <!-- Network traffic monitor single-line text size -->
     <dimen name="net_traffic_single_text_size">12dp</dimen>
 
     <!-- Network traffic monitor multi-line text size -->
     <dimen name="net_traffic_multi_text_size">8dp</dimen>
-
     <dimen name="queue_row_height">52dp</dimen>
     <dimen name="queue_top_shadow">3dp</dimen>
 </resources>

@@ -84,8 +84,6 @@ public class StatusBarKeyguardViewManager {
     private boolean mDeviceWillWakeUp;
     private boolean mDeferScrimFadeOut;
 
-    private View mUnlockFab;
-
     public StatusBarKeyguardViewManager(Context context, ViewMediatorCallback callback,
             LockPatternUtils lockPatternUtils) {
         mContext = context;
@@ -258,8 +256,8 @@ public class StatusBarKeyguardViewManager {
         mOccluded = occluded;
         mStatusBarWindowManager.setKeyguardOccluded(occluded);
         mPhoneStatusBar.getVisualizer().setOccluded(occluded);
-        if (mUnlockFab != null && mUnlockFab.isAttachedToWindow() && !occluded) {
-            hideUnlockFab();
+        if (!occluded) {
+            mPhoneStatusBar.mKeyguardBottomArea.setVisibility(View.GONE);
         }
         reset(false);
     }
@@ -394,20 +392,10 @@ public class StatusBarKeyguardViewManager {
         }
     }
 
-    /**
-     * Dismisses the keyguard by going to the next screen or making it gone.
-     */
     public void dismiss() {
-        dismiss(false);
-    }
-
-    public void dismiss(boolean focusKeyguardExternalView) {
-        if ((mDeviceInteractive || mDeviceWillWakeUp) && !focusKeyguardExternalView) {
+        if ((mDeviceInteractive || mDeviceWillWakeUp)) {
             showBouncer();
-            hideUnlockFab();
-        } else if (focusKeyguardExternalView) {
-            showUnlockFab();
-            mStatusBarWindowManager.setKeyguardExternalViewFocus(true);
+            mPhoneStatusBar.mKeyguardBottomArea.setVisibility(View.GONE);
         }
     }
 
@@ -567,7 +555,7 @@ public class StatusBarKeyguardViewManager {
                 false /* delayed */, speedUpFactor);
         if (mStatusBarWindowManager.keyguardExternalViewHasFocus()) {
             mStatusBarWindowManager.setKeyguardExternalViewFocus(false);
-            dismiss(false);
+            dismiss();
         }
     }
 
@@ -592,13 +580,9 @@ public class StatusBarKeyguardViewManager {
     }
 
     public void setKeyguardExternalViewFocus(boolean hasFocus) {
-        if (hasFocus) {
-            showUnlockFab();
-        } else {
-            hideUnlockFab();
-        }
         mStatusBarWindowManager.setKeyguardExternalViewFocus(hasFocus);
     }
+<<<<<<< HEAD
 
     private void showUnlockFab() {
         if (mUnlockFab == null) {
@@ -642,4 +626,6 @@ public class StatusBarKeyguardViewManager {
     public void setBackgroundBitmap(Bitmap bmp) {
         mPhoneStatusBar.setBackgroundBitmap(bmp);
     }
+=======
+>>>>>>> 4feb6b262a85d8cd8b68121de6e6bc490ca3930b
 }
