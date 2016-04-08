@@ -3,7 +3,7 @@
 <!--
 /*
 **
-** Copyright 2008, The Android Open Source Project
+** Copyright 2015 The CyanogenMod Project
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@
 */
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <!-- service name [CHAR LIMIT=25]  -->
-  <string name="service_name">Памочнік доступу да пакетаў</string>
+  <string name="profile_applist_title">Апликације</string>
+  <string name="picker_activities">Активности</string>
+  <string name="select_custom_app_title">Изабери прилагођену апликацију</string>
+  <string name="select_custom_activity_title">Изабери прилагођену активност</string>
+  <string name="lockscreen_targets_message">Пречица закључаног екрана</string>
 </resources>
