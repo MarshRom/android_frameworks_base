@@ -361,6 +361,7 @@ public class NotificationPanelView extends PanelView implements
             mKeyguardStatusView.setTranslationX(0);
             mKeyguardStatusView.setAlpha(1f);
         }
+    };
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
