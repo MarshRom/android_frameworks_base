@@ -2410,6 +2410,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             mAppCircleSidebar = (AppCircleSidebar) View.inflate(mContext, R.layout.app_circle_sidebar, null);
             mWindowManager.addView(mAppCircleSidebar, getAppCircleSidebarLayoutParams());
         }
+		AppCircleSidebar.startBlurTask();
     }
 
     protected void removeAppCircleSidebar() {

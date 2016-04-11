@@ -188,6 +188,7 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout.OnChildLocationsChangedListener;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.statusbar.stack.StackViewState;
+import com.android.systemui.statusbar.appcirclesidebar.AppCircleSidebar;
 import com.android.systemui.marshrom.ShakeSensorManager;
 import com.android.systemui.volume.VolumeComponent;
 import cyanogenmod.app.CMContextConstants;
@@ -1447,6 +1448,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // atualiza
         NotificationPanelView.updatePreferences(context);
+        AppCircleSidebar.updatePreferences(context);
         RecentsActivity.updatePreferences(context);
         NotificationBackgroundView.updatePreferences(context);
         StatusBarHeaderView.updatePreferences(context);
