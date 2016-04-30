@@ -3259,59 +3259,12 @@ public final class Settings {
 
         /** @hide */
         public static final Validator WINDOW_ORIENTATION_LISTENER_LOG_VALIDATOR = sBooleanValidator;
-        
 
         /**
-         * Boolean value on whether to show weather in the statusbar
-         */
-        public static final String STATUS_BAR_SHOW_WEATHER = "status_bar_show_weather";
-
-        /**
-         * Whether to show the weather info on the lock screen
+         * @deprecated Use {@link android.provider.Settings.Global#POWER_SOUNDS_ENABLED}
+         * instead
          * @hide
          */
-        public static final String LOCK_SCREEN_SHOW_WEATHER = "lock_screen_show_weather";
-
-        /**
-         * Whether to show the weather location on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_SHOW_WEATHER_LOCATION = "lock_screen_show_weather_location";
-
-        /**
-         * Whether to show the weather update timestamp on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_SHOW_WEATHER_TIMESTAMP = "lock_screen_show_weather_timestamp";
-
-        /**
-         * Weather condition icon on the lock screen
-         * 0: monochrome
-         * 1: colored
-         * 2: vclouds
-         * default: 0
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_CONDITION_ICON = "lock_screen_weather_condition_icon";
-
-        /**
-         * Whether to colorize all weather condition icons on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_COLORIZE_ALL_ICONS = "lock_screen_weather_colorize_all_icons";
-
-        /**
-         * Color of the weather text on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_TEXT_COLOR = "lock_screen_weather_text_color";
-
-        /**
-         * Color of the weather condition icons on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_ICON_COLOR = "lock_screen_weather_icon_color";
-
         @Deprecated
         public static final String POWER_SOUNDS_ENABLED = Global.POWER_SOUNDS_ENABLED;
 
