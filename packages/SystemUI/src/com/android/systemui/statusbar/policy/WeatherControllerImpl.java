@@ -17,21 +17,11 @@
 package com.android.systemui.statusbar.policy;
 
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-import android.content.IntentFilter;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Handler;
-import android.provider.Settings;
-=======
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Handler;
->>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
 import android.util.Log;
 import cyanogenmod.providers.WeatherContract;
 import cyanogenmod.weather.util.WeatherUtils;
@@ -54,34 +44,11 @@ public class WeatherControllerImpl implements WeatherController {
             "com.cyanogenmod.lockclock", "com.cyanogenmod.lockclock.weather.ForecastActivity");
     public static final String ACTION_FORCE_WEATHER_UPDATE
             = "com.cyanogenmod.lockclock.action.FORCE_WEATHER_UPDATE";
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-    public static final Uri CURRENT_WEATHER_URI
-            = Uri.parse("content://com.cyanogenmod.lockclock.weather.provider/weather/current");
-    public static final String[] WEATHER_PROJECTION = new String[]{
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-            "city",
-            "wind",
-            "condition_code",
-<<<<<<< HEAD
-            "temperature"
-=======
     private static final String[] WEATHER_PROJECTION = new String[]{
             CURRENT_TEMPERATURE,
             CURRENT_TEMPERATURE_UNIT,
             CURRENT_CITY,
             CURRENT_CONDITION
->>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
-=======
-=======
->>>>>>> parent of 2298572... Lockscreen weather options [1/2]:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
-            "temperature",
-            "city",
-            "condition"
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-
->>>>>>> parent of 07e887b... Clean Up Lockscreen Weather (items & layout) [1/2]
-=======
->>>>>>> parent of 2298572... Lockscreen weather options [1/2]:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
     };
 
     private final ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
@@ -130,28 +97,9 @@ public class WeatherControllerImpl implements WeatherController {
         } else {
             try {
                 c.moveToFirst();
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-                mCachedInfo.city = c.getString(0);
-                mCachedInfo.wind = c.getString(1);
-                mCachedInfo.conditionCode = c.getInt(2);
-                mCachedInfo.conditionDrawable = getIcon(mCachedInfo.conditionCode);
-                mCachedInfo.temp = c.getString(3);
-<<<<<<< HEAD
-=======
                 mCachedInfo.temp = WeatherUtils.formatTemperature(c.getDouble(0), c.getInt(1));
                 mCachedInfo.city = c.getString(2);
                 mCachedInfo.condition = c.getString(3);
->>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
-=======
-                mCachedInfo.humidity = c.getString(4);
-                mCachedInfo.condition = c.getString(5);
->>>>>>> parent of 07e887b... Clean Up Lockscreen Weather (items & layout) [1/2]
-=======
-                mCachedInfo.temp = c.getString(0);
-                mCachedInfo.city = c.getString(1);
-                mCachedInfo.condition = c.getString(2);
->>>>>>> parent of 2298572... Lockscreen weather options [1/2]:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
             } finally {
                 c.close();
             }
@@ -178,16 +126,4 @@ public class WeatherControllerImpl implements WeatherController {
             fireCallback();
         }
     }
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-
-<<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
-    @Override
-    public void updateWeather() {
-        queryWeather();
-        fireCallback();
-    }
-=======
->>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
-=======
->>>>>>> parent of 2298572... Lockscreen weather options [1/2]:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
 }
