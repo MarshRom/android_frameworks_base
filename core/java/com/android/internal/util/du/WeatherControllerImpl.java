@@ -59,8 +59,9 @@ public class WeatherControllerImpl implements WeatherController {
             = Uri.parse("content://com.cyanogenmod.lockclock.weather.provider/weather/current");
     public static final String[] WEATHER_PROJECTION = new String[]{
             "city",
-            "condition",
+            "wind",
             "condition_code",
+<<<<<<< HEAD
             "temperature"
 =======
     private static final String[] WEATHER_PROJECTION = new String[]{
@@ -69,6 +70,12 @@ public class WeatherControllerImpl implements WeatherController {
             CURRENT_CITY,
             CURRENT_CONDITION
 >>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
+=======
+            "temperature",
+            "humidity",
+            "condition"
+
+>>>>>>> parent of 07e887b... Clean Up Lockscreen Weather (items & layout) [1/2]
     };
     public static final String LOCK_CLOCK_PACKAGE_NAME = "com.cyanogenmod.lockclock";
 
@@ -146,15 +153,20 @@ public class WeatherControllerImpl implements WeatherController {
                 c.moveToFirst();
 <<<<<<< HEAD:core/java/com/android/internal/util/du/WeatherControllerImpl.java
                 mCachedInfo.city = c.getString(0);
-                mCachedInfo.condition = c.getString(1);
+                mCachedInfo.wind = c.getString(1);
                 mCachedInfo.conditionCode = c.getInt(2);
                 mCachedInfo.conditionDrawable = getIcon(mCachedInfo.conditionCode);
                 mCachedInfo.temp = c.getString(3);
+<<<<<<< HEAD
 =======
                 mCachedInfo.temp = WeatherUtils.formatTemperature(c.getDouble(0), c.getInt(1));
                 mCachedInfo.city = c.getString(2);
                 mCachedInfo.condition = c.getString(3);
 >>>>>>> a86c8a9551afa0ee0a215013aa4707ff6e111663:packages/SystemUI/src/com/android/systemui/statusbar/policy/WeatherControllerImpl.java
+=======
+                mCachedInfo.humidity = c.getString(4);
+                mCachedInfo.condition = c.getString(5);
+>>>>>>> parent of 07e887b... Clean Up Lockscreen Weather (items & layout) [1/2]
             } finally {
                 c.close();
             }
