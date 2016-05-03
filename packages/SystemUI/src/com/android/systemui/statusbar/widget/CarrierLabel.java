@@ -59,8 +59,6 @@ public class CarrierLabel extends TextView {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_CARRIER_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_CARRIER_COLOR_ENABLE), false, this);
         }
 
         @Override
@@ -167,19 +165,11 @@ public class CarrierLabel extends TextView {
     private void updateColor() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        int defaultColor = getResources().getColor(R.keyguard_carrier_text_color);
+        int defaultColor = getResources().getColor(R.color.status_bar_clock_color);
         int mCarrierColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_COLOR, defaultColor);
-
-        boolean mCarrierColorEnable = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CARRIER_COLOR_ENABLE, 0) == 1);
-
         if  (mCarrierColor == Integer.MIN_VALUE) {
              mCarrierColor = defaultColor;
-        }
-
-        if (mCarrierColorEnable) {
-            mCarrierColor = defaultColor;
         }
         setTextColor(mCarrierColor);
     }
