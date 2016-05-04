@@ -3712,9 +3712,7 @@ public final class Settings {
          * Carrier Label Custom Color
          * @hide
          */
-        public static final String STATUS_BAR_CARRIER_COLOR_ENABLE = "status_bar_carrier_color_enable";
-        
-	public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
+        public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
 
 
         /**
