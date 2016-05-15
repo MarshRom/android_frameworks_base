@@ -345,7 +345,7 @@ public class StatusBarWindowView extends FrameLayout {
             mDoubleTapToSleepEnabled = CMSettings.System
                     .getInt(resolver, CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE, 1) == 1;
             mDoubleTapToSleepLockScreen = Settings.System.getIntForUser(resolver,
-                    Settings.System.DOUBLE_TAP_SLEEP_LOCK_SCREEN, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.DOUBLE_TAP_SLEEP_LOCK_SCREEN, 1, UserHandle.USER_CURRENT) == 1;
         }
     }
 }
