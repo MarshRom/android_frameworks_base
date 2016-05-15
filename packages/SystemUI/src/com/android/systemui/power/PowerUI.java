@@ -60,7 +60,7 @@ public class PowerUI extends SystemUI {
     private int mInvalidCharger = 0;
 
     private int mLowBatteryAlertCloseLevel;
-    private final int[] mLowBatteryReminderLevels = new int[2];
+    private final int[] mLowBatteryReminderLevels = new int[3];
 
     private long mScreenOffTime = -1;
 
