@@ -302,6 +302,8 @@ public class NotificationPanelView extends PanelView implements
     private LiveLockScreenController mLiveLockscreenController;
     private final GestureDetector mGestureDetector;
     private ViewLinker mViewLinker;
+    private final UnlockMethodCache mUnlockMethodCache;
+
 
     private enum SwipeLockedDirection {
         UNKNOWN,
@@ -432,6 +434,7 @@ public class NotificationPanelView extends PanelView implements
         Point point = new Point();
         display.getSize(point);
         mScreenHeight = point.y;
+        mUnlockMethodCache = UnlockMethodCache.getInstance(context);
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -1174,7 +1177,8 @@ public class NotificationPanelView extends PanelView implements
             return true;
         }
 
-        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia()) {
+        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia() ||
+                (mUnlockMethodCache.isTrustManaged() && mAfforanceHelper.isOnLockIcon(event))) {
             return super.onInterceptTouchEvent(event);
         }
 
@@ -1369,7 +1373,8 @@ public class NotificationPanelView extends PanelView implements
             updateVerticalPanelPosition(event.getX());
         }
 
-        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia()) {
+        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia() ||
+                (mUnlockMethodCache.isTrustManaged() && mAfforanceHelper.isOnLockIcon(event))) {
             super.onTouchEvent(event);
             return true;
         }
@@ -1693,6 +1698,9 @@ public class NotificationPanelView extends PanelView implements
         if (statusBarState == StatusBarState.KEYGUARD ||
                 statusBarState == StatusBarState.SHADE_LOCKED) {
             updateDozingVisibilities(false /* animate */);
+        }
+        if (statusBarState == StatusBarState.KEYGUARD) {
+            mShowingExternalKeyguard = false;
         }
         resetVerticalPanelPosition();
         updateQsState();
@@ -2225,10 +2233,6 @@ public class NotificationPanelView extends PanelView implements
         updateNotificationTranslucency();
         updatePanelExpanded();
         mNotificationStackScroller.setShadeExpanded(!isFullyCollapsed());
-        if (mShowingExternalKeyguard && expandedHeight >= getMaxPanelHeight()) {
-            mStatusBar.unfocusKeyguardExternalView();
-            mShowingExternalKeyguard = false;
-        }
         if (DEBUG) {
             invalidate();
         }
@@ -2714,6 +2718,7 @@ public class NotificationPanelView extends PanelView implements
             return;
         }
         mHintAnimationRunning = true;
+        mKeyguardBottomArea.expand(true);
         mAfforanceHelper.startHintAnimation(rightIcon, new Runnable() {
             @Override
             public void run() {
@@ -3148,6 +3153,8 @@ public class NotificationPanelView extends PanelView implements
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_POWER_DOUBLE_TAP;
         } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_WIGGLE) {
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_WIGGLE;
+        } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE) {
+            mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE;
         } else {
 
             // Default.
@@ -3157,7 +3164,8 @@ public class NotificationPanelView extends PanelView implements
         // If we are launching it when we are occluded already we don't want it to animate,
         // nor setting these flags, since the occluded state doesn't change anymore, hence it's
         // never reset.
-        if (!isFullyCollapsed()) {
+        if (!isFullyCollapsed() && mLastCameraLaunchSource ==
+                KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE) {
             mLaunchingAffordance = true;
             setLaunchingAffordance(true);
         } else {
