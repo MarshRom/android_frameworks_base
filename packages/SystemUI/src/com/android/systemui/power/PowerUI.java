@@ -93,6 +93,7 @@ public class PowerUI extends SystemUI {
     void updateBatteryWarningLevels() {
         int critLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
+        int lastwarnLevel = 2;
 
         final ContentResolver resolver = mContext.getContentResolver();
         int defWarnLevel = mContext.getResources().getInteger(
@@ -108,6 +109,7 @@ public class PowerUI extends SystemUI {
 
         mLowBatteryReminderLevels[0] = warnLevel;
         mLowBatteryReminderLevels[1] = critLevel;
+        mLowBatteryReminderLevels[2] = lastwarnLevel;
         mLowBatteryAlertCloseLevel = mLowBatteryReminderLevels[0]
                 + mContext.getResources().getInteger(
                         com.android.internal.R.integer.config_lowBatteryCloseWarningBump);
