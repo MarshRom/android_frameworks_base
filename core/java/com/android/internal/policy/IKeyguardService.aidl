@@ -19,7 +19,6 @@ import com.android.internal.policy.IKeyguardDrawnCallback;
 import com.android.internal.policy.IKeyguardStateCallback;
 import com.android.internal.policy.IKeyguardExitCallback;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 oneway interface IKeyguardService {
@@ -95,8 +94,6 @@ oneway interface IKeyguardService {
      * to start the keyguard dismiss sequence.
      */
     void onActivityDrawn();
-
-    void setBackgroundBitmap(in Bitmap bmp);
 
     void showKeyguard();
 

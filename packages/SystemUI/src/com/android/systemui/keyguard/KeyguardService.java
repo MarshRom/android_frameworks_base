@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.IBinder;
 import android.os.Process;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.android.internal.policy.IKeyguardDrawnCallback;
@@ -191,11 +190,6 @@ public class KeyguardService extends Service {
         public void onActivityDrawn() {
             checkPermission();
             mKeyguardViewMediator.onActivityDrawn();
-        }
-        
-        @Override
-        public void setBackgroundBitmap(Bitmap bmp) {
-            mKeyguardViewMediator.setBackgroundBitmap(bmp);
         }
     };
 }
