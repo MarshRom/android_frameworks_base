@@ -612,6 +612,7 @@ public class AppCircleSidebar extends TriggerOverlayView implements PackageAdapt
         Intent intent = Intent.makeMainActivity(cn);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+        cancelAutoHideTimer();
     }
 
     private void launchApplicationFromHistory(String packageName, String className) {
@@ -621,6 +622,7 @@ public class AppCircleSidebar extends TriggerOverlayView implements PackageAdapt
         intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
                            | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+        cancelAutoHideTimer();
     }
 
     private void killApp(String packageName) {
