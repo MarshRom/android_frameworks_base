@@ -580,43 +580,4 @@ public class StatusBarKeyguardViewManager {
     public void setKeyguardExternalViewFocus(boolean hasFocus) {
         mStatusBarWindowManager.setKeyguardExternalViewFocus(hasFocus);
     }
-
-    private void showUnlockFab() {
-        if (mUnlockFab == null) {
-            mUnlockFab = View.inflate(mContext, R.layout.unlock_fab, null);
-        }
-        if (!mUnlockFab.isAttachedToWindow()) {
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                            | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
-                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                            | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-                    PixelFormat.TRANSLUCENT);
-            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-            lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-            lp.setTitle("UnlockFab");
-            lp.packageName = mContext.getPackageName();
-            lp.width = lp.height =
-                    mContext.getResources().getDimensionPixelSize(R.dimen.unlock_fab_size);
-            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            wm.addView(mUnlockFab, lp);
-            mUnlockFab.setOnClickListener(mUnlockFabClickListener);
-        }
-    }
-
-    private void hideUnlockFab() {
-        if (mUnlockFab != null && mUnlockFab.isAttachedToWindow()) {
-            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            wm.removeViewImmediate(mUnlockFab);
-        }
-    }
-
-    private View.OnClickListener mUnlockFabClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mStatusBarWindowManager.setKeyguardExternalViewFocus(false);
-            dismiss(false);
-        }
-    };
 }
