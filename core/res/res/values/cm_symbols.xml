@@ -140,4 +140,9 @@
     <java-symbol type="string" name="uicc_hot_swapped_event_title" />
     <java-symbol type="string" name="uicc_hot_swapped_event_text" />
 
+    <!-- Usb drive persistent notification -->
+    <java-symbol type="bool" name="config_persistUsbDriveNotification" />
+
+    <!--Exposed style for power menu -->
+    <java-symbol type="style" name="Theme.Power.Dialog" />
 </resources>
