@@ -583,6 +583,7 @@ public class NotificationPanelView extends PanelView implements
             // transparente ?
 
             handleQuickSettingsBackround();
+            mKeyguardWeatherInfo = (TextView) mKeyguardStatusView.findViewById(R.id.weather_info);
     }
 ////////////////////////////////
     private static void handleQuickSettingsBackround() {
@@ -719,7 +720,6 @@ public class NotificationPanelView extends PanelView implements
         // blur
         new BlurTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        mKeyguardWeatherInfo = (TextView) mKeyguardStatusView.findViewById(R.id.weather_info);
     }
 
     public boolean isAffordanceSwipeInProgress() {
