@@ -246,3 +246,12 @@ public class KeyguardServiceWrapper implements IKeyguardService {
         mKeyguardStateMonitor.dump(prefix, pw);
     }
 }
+
+    public void showKeyguard() {
+        try {
+            mService.showKeyguard();
+        } catch (RemoteException e) {
+            Slog.w(TAG, "Remote Exception", e);
+        }
+    }
+}
