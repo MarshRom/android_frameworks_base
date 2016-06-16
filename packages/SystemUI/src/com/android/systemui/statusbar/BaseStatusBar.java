@@ -2453,9 +2453,8 @@ public abstract class BaseStatusBar extends SystemUI implements
             mWindowManager.removeView(mAppCircleSidebar);
         }
     }
-
-
- protected WindowManager.LayoutParams getAppCircleSidebarLayoutParams() {
+    
+    protected WindowManager.LayoutParams getAppCircleSidebarLayoutParams() {
         int maxWidth =
                 mContext.getResources().getDimensionPixelSize(R.dimen.app_sidebar_trigger_width);
 
@@ -2475,7 +2474,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         lp.setTitle("AppCircleSidebar");
 
         return lp;
-
+    }
+ 
     /**
      * Returns a context with the given theme applied or the original context if we fail to get a
      * themed context.
