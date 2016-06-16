@@ -619,5 +619,4 @@ public class StatusBarKeyguardViewManager {
             dismiss(false);
         }
     };
->>>>>>> parent of 5ccdfbb... Blur LockScreen (3/3)
 }
