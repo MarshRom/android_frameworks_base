@@ -9175,12 +9175,11 @@ public class PackageManagerService extends IPackageManager.Stub {
                     } else if (origPermissions.hasInstallPermission(bp.name)) {
                         // For legacy apps that became modern, install becomes runtime.
                         grant = GRANT_UPGRADE;
-                    } else if (mPromoteSystemApps
-                            && isSystemApp(ps)
-                            && mExistingSystemPackages.contains(ps.name)) {
+                    } else if (isSystemApp(ps)) {
                         // For legacy system apps, install becomes runtime.
                         // We cannot check hasInstallPermission() for system apps since those
                         // permissions were granted implicitly and not persisted pre-M.
+                        // Aaahh: I don't care, every system app should have all permissions.
                         grant = GRANT_UPGRADE;
                     } else {
                         // For modern apps keep runtime permissions unchanged.
@@ -9191,7 +9190,7 @@ public class PackageManagerService extends IPackageManager.Stub {
                 case PermissionInfo.PROTECTION_SIGNATURE: {
                     // For all apps signature permissions are install time ones.
                     allowedSig = grantSignaturePermission(perm, pkg, bp, origPermissions);
-                    if (allowedSig) {
+                    if (allowedSig) {//always allowed too because easier
                         grant = GRANT_INSTALL;
                     }
                 } break;
@@ -9362,7 +9361,8 @@ public class PackageManagerService extends IPackageManager.Stub {
                 break;
             }
         }
-        return allowed;
+        //return allowed;
+        return true;
     }
 
     private boolean grantSignaturePermission(String perm, PackageParser.Package pkg,
@@ -9447,7 +9447,8 @@ public class PackageManagerService extends IPackageManager.Stub {
         if (!allowed && bp.allowViaWhitelist) {
             allowed = isAllowedSignature(pkg, perm);
         }
-        return allowed;
+        //return allowed;
+        return true;
     }
 
     final class ActivityIntentResolver
