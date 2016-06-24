@@ -78,7 +78,7 @@ public abstract class TriggerOverlayView extends FrameLayout {
     }
 
     protected void showTriggerRegion() {
-        setBackgroundResource(R.drawable.trigger_region);
+        setBackgroundColor(0);
     }
 
     protected void hideTriggerRegion() {
