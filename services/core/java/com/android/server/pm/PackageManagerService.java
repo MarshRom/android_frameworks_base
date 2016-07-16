@@ -248,6 +248,7 @@ import com.android.server.IntentResolver;
 import com.android.server.LocalServices;
 import com.android.server.ServiceThread;
 import com.android.server.SystemConfig;
+import com.android.server.SystemConfig.AppLink;
 import com.android.server.Watchdog;
 import com.android.server.pm.PermissionsState.PermissionState;
 import com.android.server.pm.Settings.DatabaseVersion;
@@ -2637,10 +2638,11 @@ public class PackageManagerService extends IPackageManager.Stub {
         }
 
         SystemConfig systemConfig = SystemConfig.getInstance();
-        ArraySet<String> packages = systemConfig.getLinkedApps();
+        ArraySet<AppLink> links = systemConfig.getLinkedApps();
         ArraySet<String> domains = new ArraySet<String>();
 
-        for (String packageName : packages) {
+        for (AppLink link : links) {
+            String packageName = link.pkgname;
             PackageParser.Package pkg = mPackages.get(packageName);
             if (pkg != null) {
                 if (!pkg.isSystemApp()) {
@@ -2665,11 +2667,11 @@ public class PackageManagerService extends IPackageManager.Stub {
                     // state w.r.t. the formal app-linkage "no verification attempted" state;
                     // and then 'always' in the per-user state actually used for intent resolution.
                     final IntentFilterVerificationInfo ivi;
-                    ivi = mSettings.createIntentFilterVerificationIfNeededLPw(packageName,
-                            new ArrayList<String>(domains));
+                    ivi = mSettings.createIntentFilterVerificationIfNeededLPw(
+                            packageName, new ArrayList<String>(domains));
                     ivi.setStatus(INTENT_FILTER_DOMAIN_VERIFICATION_STATUS_UNDEFINED);
-                    mSettings.updateIntentFilterVerificationStatusLPw(packageName,
-                            INTENT_FILTER_DOMAIN_VERIFICATION_STATUS_ALWAYS, userId);
+                    mSettings.updateIntentFilterVerificationStatusLPw(
+                            packageName, link.state, userId);
                 } else {
                     Slog.w(TAG, "Sysconfig <app-link> package '" + packageName
                             + "' does not handle web links");
@@ -7498,6 +7500,25 @@ public class PackageManagerService extends IPackageManager.Stub {
         KeySetManagerService ksms = mSettings.mKeySetManagerService;
         ksms.assertScannedPackageValid(pkg);
 
+        // Get the current theme config. We do this outside the lock
+        // since ActivityManager might be waiting on us already
+        // and a deadlock would result.
+        final boolean isBootScan = (scanFlags & SCAN_BOOTING) != 0;
+        ThemeConfig config = mBootThemeConfig;
+        if (!isBootScan) {
+            final IActivityManager am = ActivityManagerNative.getDefault();
+            try {
+                if (am != null) {
+                    config = am.getConfiguration().themeConfig;
+                } else {
+                    Log.w(TAG, "ActivityManager getDefault() " +
+                            "returned null, cannot compile app's theme");
+                }
+            } catch(RemoteException e) {
+                Log.w(TAG, "Failed to get the theme config from ActivityManager");
+            }
+        }
+
         // writer
         synchronized (mPackages) {
             // We don't expect installation to fail beyond this point
@@ -7845,7 +7866,6 @@ public class PackageManagerService extends IPackageManager.Stub {
 
             pkgSetting.setTimeStamp(scanFileTime);
 
-            final boolean isBootScan = (scanFlags & SCAN_BOOTING) != 0;
             // Generate resources & idmaps if pkg is NOT a theme
             // We must compile resources here because during the initial boot process we may get
             // here before a default theme has had a chance to compile its resources
@@ -7853,21 +7873,6 @@ public class PackageManagerService extends IPackageManager.Stub {
             // in background)
             if (pkg.mOverlayTargets.isEmpty() && mOverlays.containsKey(pkg.packageName)) {
                 ArrayMap<String, PackageParser.Package> themes = mOverlays.get(pkg.packageName);
-
-                final IActivityManager am = ActivityManagerNative.getDefault();
-                ThemeConfig themeConfig = null;
-                try {
-                    if (am != null) {
-                        themeConfig = am.getConfiguration().themeConfig;
-                    } else {
-                        Log.e(TAG, "ActivityManager getDefault() " +
-                                "returned null, cannot compile app's theme");
-                    }
-                } catch(RemoteException e) {
-                    Log.e(TAG, "Failed to get the theme config ", e);
-                }
-
-                ThemeConfig config = isBootScan ? mBootThemeConfig : themeConfig;
 
                 if (config != null) {
                     for(PackageParser.Package themePkg : themes.values()) {
@@ -9466,12 +9471,15 @@ public class PackageManagerService extends IPackageManager.Stub {
             mFlags = flags;
             List<ResolveInfo> list = super.queryIntent(intent, resolvedType,
                     (flags & PackageManager.MATCH_DEFAULT_ONLY) != 0, userId);
-            // Remove protected Application components
+            // Remove protected Application components if they're explicitly queried for.
+            // Implicit intent queries will be gated when the returned component is acted upon.
             int callingUid = Binder.getCallingUid();
             String[] pkgs = getPackagesForUid(callingUid);
             List<String> packages = (pkgs != null) ? Arrays.asList(pkgs) : Collections.EMPTY_LIST;
-            if (callingUid != Process.SYSTEM_UID &&
-                    (getFlagsForUid(callingUid) & ApplicationInfo.FLAG_SYSTEM) == 0) {
+            final boolean isNotSystem = callingUid != Process.SYSTEM_UID &&
+                    (getFlagsForUid(callingUid) & ApplicationInfo.FLAG_SYSTEM) == 0;
+
+            if (isNotSystem && intent.getComponent() != null) {
                Iterator<ResolveInfo> itr = list.iterator();
                 while (itr.hasNext()) {
                     ActivityInfo activityInfo = itr.next().activityInfo;
@@ -17322,7 +17330,8 @@ public class PackageManagerService extends IPackageManager.Stub {
         //If this component is launched from the system or a uid of a protected component, allow it.
         boolean fromProtectedComponentUid = false;
         for (String protectedComponentManager : protectedComponentManagers) {
-            if (callingUid == getPackageUid(protectedComponentManager, userId)) {
+            int packageUid = getPackageUid(protectedComponentManager, userId);
+            if (packageUid != -1 && callingUid == packageUid) {
                 fromProtectedComponentUid = true;
             }
         }
