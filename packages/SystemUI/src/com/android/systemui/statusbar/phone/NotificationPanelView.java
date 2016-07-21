@@ -309,6 +309,9 @@ public class NotificationPanelView extends PanelView implements
 
     private boolean mKeyguardWeatherEnabled;
     private TextView mKeyguardWeatherInfo;
+    private TextView mKeyguardWeatherCity;
+    //private TextView mKeyguardWeatherIcon;
+
     private WeatherControllerImpl mWeatherController;
 
     private enum SwipeLockedDirection {
@@ -584,6 +587,8 @@ public class NotificationPanelView extends PanelView implements
 
             handleQuickSettingsBackround();
             mKeyguardWeatherInfo = (TextView) mKeyguardStatusView.findViewById(R.id.weather_info);
+            mKeyguardWeatherCity = (TextView) mKeyguardStatusView.findViewById(R.id.city);
+            //mKeyguardWeatherIcon = (ImageView) mKeyguardStatusView.findViewById(R.id.weather_image);
     }
 ////////////////////////////////
     private static void handleQuickSettingsBackround() {
@@ -3268,12 +3273,18 @@ public class NotificationPanelView extends PanelView implements
     public void onWeatherChanged(WeatherController.WeatherInfo info) {
         if (!mKeyguardWeatherEnabled || Double.isNaN(info.temp) || info.condition == null) {
             mKeyguardWeatherInfo.setVisibility(GONE);
+            mKeyguardWeatherCity.setVisibility(GONE);
+            //mKeyguardWeatherIcon.setVisibility(GONE);
         } else {
-            mKeyguardWeatherInfo.setText(mContext.getString(
-                    R.string.keyguard_status_view_weather_format,
-                    WeatherUtils.formatTemperature(info.temp, info.tempUnit),
-                    info.condition));
+            mKeyguardWeatherInfo.setText(
+                    WeatherUtils.formatTemperature(info.temp, info.tempUnit));
             mKeyguardWeatherInfo.setVisibility(VISIBLE);
+
+            mKeyguardWeatherCity.setText(info.city);
+            mKeyguardWeatherCity.setVisibility(VISIBLE);
+
+            //mKeyguardWeatherIcon.setImageDrawable(info.conditionDrawable);
+            //mKeyguardWeatherIcon.setVisibility(VISIBLE);
         }
     }
 
