@@ -1,4 +1,4 @@
-package com.cyngn.keyguard;
+package com.android.keyguard;
 
 import android.app.WallpaperManager;
 import android.content.Context;
