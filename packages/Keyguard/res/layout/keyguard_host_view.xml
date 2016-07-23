@@ -22,13 +22,32 @@
 <com.android.keyguard.KeyguardHostView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:androidprv="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:id="@+id/keyguard_host_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:importantForAccessibility="yes"> <!-- Needed because TYPE_WINDOW_STATE_CHANGED is sent
-                                                  from this view when bouncer is shown -->
+    android:layout_height="match_parent"> 
+
+    <com.android.keyguard.KeyguardDrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.android.keyguard.BlurTextureView
+            android:id="@+id/keyguard_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <View
+             android:id="@+id/background_blur"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent" />
+
+            <View
+                androidv:id="@+id/foreground_blur"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.android.keyguard.BlurTextureView>
 
     <com.android.keyguard.KeyguardSecurityContainer
         android:id="@+id/keyguard_security_container"
@@ -49,6 +68,8 @@
             android:gravity="center">
         </com.android.keyguard.KeyguardSecurityViewFlipper>
     </com.android.keyguard.KeyguardSecurityContainer>
+    </com.android.keyguard.KeyguardDrawerLayout>
+
 
 </com.android.keyguard.KeyguardHostView>
 
