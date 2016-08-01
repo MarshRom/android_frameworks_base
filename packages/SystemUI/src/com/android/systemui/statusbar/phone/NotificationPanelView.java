@@ -331,6 +331,8 @@ public class NotificationPanelView extends PanelView implements
     private boolean mUserInteractedWithLiveLockScreen;
     private boolean mUserReturnedFromLiveLockScreen;
 
+    private boolean mScreenOnHintsEnabled;
+
     private enum SwipeLockedDirection {
         UNKNOWN,
         HORIZONTAL,
@@ -466,6 +468,7 @@ public class NotificationPanelView extends PanelView implements
         mScreenHeight = point.y;
         mUnlockMethodCache = UnlockMethodCache.getInstance(context);
 
+        mScreenOnHintsEnabled = res.getBoolean(R.bool.config_showScreenOnLockScreenHints);
         mUserUnlocked = getUserUnlocked();
         mUserExpandedNotifications = getUserExpandedNotificationsInKeyguard();
         mUserInteractedWithLiveLockScreen = getUserInteractedWithLls();
@@ -2990,9 +2993,11 @@ public class NotificationPanelView extends PanelView implements
 
     public void onScreenTurningOn() {
         mKeyguardStatusView.refreshTime();
-        startScreenOnHintAnimation(mLiveLockscreenController.isLiveLockScreenInteractive() &&
-                !mUserInteractedWithLiveLockScreen,
-                !mUserUnlocked, !mUserExpandedNotifications);
+        if (shouldShowScreenOnHints()) {
+            startScreenOnHintAnimation(mLiveLockscreenController.isLiveLockScreenInteractive() &&
+                            !mUserInteractedWithLiveLockScreen,
+                    !mUserUnlocked, !mUserExpandedNotifications);
+        }
     }
 
     @Override
@@ -3440,5 +3445,10 @@ public class NotificationPanelView extends PanelView implements
 
     private boolean getUserReturnedFromLls() {
         return getSharedPreferenceBoolean(KEY_USER_RETURNED_FROM_LLS, false);
+    }
+
+    private boolean shouldShowScreenOnHints() {
+        return mScreenOnHintsEnabled && mStatusBar.isDeviceProvisioned() &&
+                mStatusBarState == StatusBarState.KEYGUARD;
     }
 }
