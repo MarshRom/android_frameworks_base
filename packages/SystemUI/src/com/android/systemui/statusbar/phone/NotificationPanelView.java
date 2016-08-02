@@ -853,7 +853,10 @@ public class NotificationPanelView extends PanelView implements
 
             // obtém o tamamho real da tela
             mScreenDimens = DisplayUtils.getRealScreenDimensions(context);
-
+            //We don't want SystemUI to crash for Arithmetic Exception
+            if(mBlurScale==0){
+                mBlurScale=1;
+            }
             // obtém a screenshot da tela com escala reduzida
             mScreenBitmap = DisplayUtils.takeSurfaceScreenshot(context, mBlurScale);
 
@@ -870,21 +873,10 @@ public class NotificationPanelView extends PanelView implements
 
                 // calback
                 mCallback.dominantColor(DisplayUtils.getDominantColorByPixelsSampling(mScreenBitmap, 20, 20));
-
-                // blur engine
-            //    if (mBlurEngine == BlurUtils.BlurEngine.RenderScriptBlur) {
-//
-   //                 mScreenBitmap = mBlurUtils.renderScriptBlur(mScreenBitmap, mBlurRadius);
-//
-  //              } else if (mBlurEngine == BlurUtils.BlurEngine.StackBlur) {
-
-    //                mScreenBitmap = mBlurUtils.stackBlur(mScreenBitmap, mBlurRadius);
-//
-  //              } else if (mBlurEngine == BlurUtils.BlurEngine.FastBlur) {
-//
-  //                  mBlurUtils.fastBlur(mScreenBitmap, mBlurRadius);
-//
-  //              }
+                //We don't want SystemUI to crash for Arithmetic Exception
+                if(mBlurRadius == 0){
+                    mBlurRadius=1;
+                }
                 mScreenBitmap = mBlurUtils.renderScriptBlur(mScreenBitmap, mBlurRadius);
                 return mScreenBitmap;
 
