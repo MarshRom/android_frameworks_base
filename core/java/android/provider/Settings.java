@@ -3688,16 +3688,8 @@ public final class Settings {
          * Volume key controls ringtone or media sound stream
          * @hide
          */
-
         public static final String VOLUME_KEYS_CONTROL_RING_STREAM =
                 "volume_keys_control_ring_stream";
-
-	 /**
-	 * Enable/Disable Flashlight notification
-	 * @hide
-	 */
-
-	public static final String FLASHLIGHT_NOTIFICATION = "flashlight_notification";
 
         /**
          * Status bar carrier label

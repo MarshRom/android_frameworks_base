@@ -33,7 +33,6 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextUtils;
 import android.util.Log;
-import android.provider.Settings; 
 
 import com.android.systemui.R;
 
@@ -86,12 +85,8 @@ public class FlashlightController {
                     }
                 });
             } else if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
-		if (Settings.System.getInt(mContext.getContentResolver(),
-		      Settings.System.FLASHLIGHT_NOTIFICATION, 0) == 1) {
                 setNotificationShown(true);
-            } else {
-		setNotificationShown(false);
-		}
+            }
         }
     };
 
@@ -171,12 +166,6 @@ public class FlashlightController {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             mContext.registerReceiver(mReceiver, filter);
             mReceiverRegistered = true;
-	    if (Settings.System.getInt(mContext.getContentResolver(),
-		  Settings.System.FLASHLIGHT_NOTIFICATION, 0) == 1) {
-	    setNotificationShown(true);
-	    } else {
-	    setNotificationShown(false);
-	    }
         } else if (!listen) {
             if (mReceiverRegistered) {
                 mContext.unregisterReceiver(mReceiver);
