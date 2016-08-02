@@ -3718,6 +3718,12 @@ public final class Settings {
 	 * @hide
 	 */
 	public static final String LOCKSCREEN_SHORTCUTS = "lockscreen_shortcuts";
+	
+	/**
+         * Whether shorcuts open with normal or longpress
+         * @hide
+         */
+	public static final String LOCKSCREEN_SHORTCUTS_LONGPRESS = "lockscreen_shortcuts_longpress";
 
         /**
          * Carrier Label Custom Color
