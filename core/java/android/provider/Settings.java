@@ -3713,6 +3713,12 @@ public final class Settings {
 	 */
 	public static final String SCREENSHOT_SOUND = "screenshot_sound";
 
+	/**
+	 * Lockscreen shortcuts
+	 * @hide
+	 */
+	public static final String LOCKSCREEN_SHORTCUTS = "lockscreen_shortcuts";
+
         /**
          * Carrier Label Custom Color
          * @hide
