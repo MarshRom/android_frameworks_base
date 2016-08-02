@@ -3707,6 +3707,12 @@ public final class Settings {
          */
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
+	/**
+	 * Screenshot sound effect switch
+	 * @hide
+	 */
+	public static final String SCREENSHOT_SOUND = "screenshot_sound";
+
         /**
          * Carrier Label Custom Color
          * @hide
