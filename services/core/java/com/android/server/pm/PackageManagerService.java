@@ -4753,10 +4753,11 @@ public class PackageManagerService extends IPackageManager.Stub {
         if (!mSystemReady || mOnlyCore) {
             return false;
         }
-
-        AppSuggestManager suggest = AppSuggestManager.getInstance(mContext);
-        return mResolverReplaced && (suggest.getService() != null) ?
-                suggest.handles(intent) : false;
+        synchronized(mPackages) {
+            AppSuggestManager suggest = AppSuggestManager.getInstance(mContext);
+            return mResolverReplaced && (suggest.getService() != null) ?
+                    suggest.handles(intent) : false;
+        }
     }
 
     @Override
@@ -6383,8 +6384,9 @@ public class PackageManagerService extends IPackageManager.Stub {
                 if (doTrim) {
                     if (!isFirstBoot()) {
                         try {
-                            ActivityManagerNative.getDefault().updateBootProgress(
-                                    IActivityManager.BOOT_STAGE_FSTRIM, null, 0, 0, true);
+                            ActivityManagerNative.getDefault().showBootMessage(
+                                    mContext.getResources().getString(
+                                            R.string.android_upgrading_fstrim), true);
                         } catch (RemoteException e) {
                         }
                     }
@@ -6506,7 +6508,7 @@ public class PackageManagerService extends IPackageManager.Stub {
         return pkgNames;
     }
 
-  private void performBootDexOpt(PackageParser.Package pkg, int curr, int total) {
+    private void performBootDexOpt(PackageParser.Package pkg, int curr, int total) {
         if (DEBUG_DEXOPT) {
             Log.i(TAG, "Optimizing app " + curr + " of " + total + ": " + pkg.packageName);
         }
