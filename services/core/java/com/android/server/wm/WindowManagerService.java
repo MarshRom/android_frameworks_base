@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
@@ -3165,9 +3164,7 @@ public class WindowManagerService extends IWindowManager.Stub
             }
 
             if (attrs != null) {
-                Binder.restoreCallingIdentity(origId);
                 mPolicy.adjustWindowParamsLw(attrs);
-                origId = Binder.clearCallingIdentity();
             }
 
             // if they don't have the permission, mask out the status bar bits
@@ -5960,18 +5957,13 @@ public class WindowManagerService extends IWindowManager.Stub
         return true;
     }
 
-    public void updateBootProgress(final int stage, final ApplicationInfo optimizedApp,
-            final int currentAppPos, final int totalAppCount, final boolean always) {
+    public void showBootMessage(final CharSequence msg, final boolean always) {
         boolean first = false;
         synchronized(mWindowMap) {
             if (DEBUG_BOOT) {
                 RuntimeException here = new RuntimeException("here");
                 here.fillInStackTrace();
-                Slog.i(TAG, "updateBootProgress: stage=" + stage
-                        + " optimizedApp=" + optimizedApp
-                        + " currentAppPos=" + currentAppPos
-                        + " totalAppCount=" + totalAppCount
-                        + " always=" + always
+                Slog.i(TAG, "showBootMessage: msg=" + msg + " always=" + always
                         + " mAllowBootMessages=" + mAllowBootMessages
                         + " mShowingBootMessages=" + mShowingBootMessages
                         + " mSystemBooted=" + mSystemBooted, here);
@@ -5989,7 +5981,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 return;
             }
             mShowingBootMessages = true;
-            mPolicy.updateBootProgress(stage, optimizedApp, currentAppPos, totalAppCount);
+            mPolicy.showBootMessage(msg, always);
         }
         if (first) {
             performEnableScreen();
