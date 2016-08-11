@@ -18,7 +18,6 @@ package com.android.server;
 
 import android.app.ActivityManagerNative;
 import android.app.ActivityThread;
-import android.app.IActivityManager;
 import android.app.IAlarmManager;
 import android.app.INotificationManager;
 import android.app.usage.UsageStatsManagerInternal;
@@ -621,8 +620,10 @@ public final class SystemServer {
         }
 
         try {
-            ActivityManagerNative.getDefault().updateBootProgress(
-                    IActivityManager.BOOT_STAGE_STARTING_APPS, null, 0, 0, false);
+            ActivityManagerNative.getDefault().showBootMessage(
+                    context.getResources().getText(
+                            com.android.internal.R.string.android_upgrading_starting_apps),
+                    false);
         } catch (RemoteException e) {
         }
 

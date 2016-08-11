@@ -22,6 +22,8 @@ import android.app.ActivityManagerInternal.SleepToken;
 import android.app.ActivityManagerNative;
 import android.app.AppOpsManager;
 import android.app.IUiModeManager;
+import android.app.KeyguardManager;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.StatusBarManager;
 import android.app.UiModeManager;
@@ -35,7 +37,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.CompatibilityInfo;
@@ -139,8 +140,6 @@ import com.android.server.GestureLauncherService;
 import com.android.server.LocalServices;
 import com.android.server.policy.keyguard.KeyguardServiceDelegate;
 import com.android.server.policy.keyguard.KeyguardServiceDelegate.DrawnListener;
-
-import org.cyanogenmod.internal.BootDexoptDialog;
 
 import java.io.File;
 import java.io.FileReader;
@@ -2507,12 +2506,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 && (attrs.flags & FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0) {
             attrs.subtreeSystemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        }
-
-        if ((attrs.privateFlags & (WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_SYSTEM_KEYS |
-                            WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY)) != 0) {
-            mContext.enforceCallingOrSelfPermission(android.Manifest.permission.PREVENT_SYSTEM_KEYS,
-                    "No permission to prevent system key");
         }
     }
 
@@ -7073,7 +7066,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         screenTurnedOn();
     }
 
-    BootDexoptDialog mBootMsgDialog = null;
+    ProgressDialog mBootMsgDialog = null;
 
     /** {@inheritDoc} */
     @Override
