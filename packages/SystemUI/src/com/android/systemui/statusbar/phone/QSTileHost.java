@@ -411,7 +411,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         // updatePreferences(getContext());
         // ensure edit tile is present
         // I DONT LIKE THIS AT ALL, checking to much?
-        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 0) == 1);
         if (mEditButton) {
             if (tiles.contains("edit")) {
                 tiles.remove("edit");
@@ -605,7 +605,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
 
     public static void updatePreferences(Context mContext) {
-        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 1) == 1);
+        mEditButton = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUSBAR_EDITBUTTON_PREFERENCE_KEY, 0) == 1);
         if (mEditButton) {
             addTilee("edit");
         } else {
