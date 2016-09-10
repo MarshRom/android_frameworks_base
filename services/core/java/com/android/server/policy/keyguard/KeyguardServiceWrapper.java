@@ -253,4 +253,7 @@ public class KeyguardServiceWrapper implements IKeyguardService {
             Slog.w(TAG, "Remote Exception", e);
         }
     }
+    public boolean isKeyguardPanelFocused() {
+        return mKeyguardStateMonitor.isKeyguardPanelFocused();
+    }
 }
