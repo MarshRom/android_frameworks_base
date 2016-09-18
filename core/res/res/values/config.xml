@@ -1172,7 +1172,7 @@
     </integer-array>
 
     <!-- Array of output values for keyboard backlight corresponding to the LUX values
-         in the config_autoBr-ightnessLevels array.  This array should have size one greater
+         in the config_autoBrightnessLevels array.  This array should have size one greater
          than the size of the config_autoBrightnessLevels array.
          The brightness values must be between 0 and 255 and be non-decreasing.
          This must be overridden in platform specific overlays -->
@@ -1239,7 +1239,7 @@
     <!-- The standard AOSP fused location provider -->
         <item>com.android.location.fused</item>
     <!-- The (faked) microg fused location provider -->
-       <item>com.google.android.gms</item>
+        <item>com.google.android.gms</item>
     </string-array>
     
     <!-- Whether to enable Hardware FLP overlay which allows Hardware FLP to be
