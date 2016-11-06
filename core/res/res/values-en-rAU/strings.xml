@@ -1020,8 +1020,8 @@
     <string name="unsupported_display_size_show" msgid="7969129195360353041">"Always show"</string>
     <string name="smv_application" msgid="3307209192155442829">"The app <xliff:g id="APPLICATION">%1$s</xliff:g> (process <xliff:g id="PROCESS">%2$s</xliff:g>) has violated its self-enforced Strict Mode policy."</string>
     <string name="smv_process" msgid="5120397012047462446">"The process <xliff:g id="PROCESS">%1$s</xliff:g> has violated its self-enforced StrictMode policy."</string>
-    <string name="android_upgrading_title" msgid="1584192285441405746">"Android is upgrading…"</string>
-    <string name="android_start_title" msgid="8418054686415318207">"Android is starting…"</string>
+    <string name="android_upgrading_title" msgid="1584192285441405746">"MarshRom is upgrading…"</string>
+    <string name="android_start_title" msgid="8418054686415318207">"MarshRom is starting…"</string>
     <string name="android_upgrading_fstrim" msgid="8036718871534640010">"Optimising storage."</string>
     <string name="android_upgrading_notification_title" msgid="8428357096969413169">"Finishing Android update…"</string>
     <string name="android_upgrading_notification_body" msgid="5761201379457064286">"Some apps may not work properly until the upgrade finishes"</string>

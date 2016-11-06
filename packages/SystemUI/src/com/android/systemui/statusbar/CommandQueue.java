@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar;
 
+import android.content.Intent;
 import android.content.ComponentName;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -77,6 +78,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_APP_TRANSITION_FINISHED       = 31 << MSG_SHIFT;
     private static final int MSG_DISMISS_KEYBOARD_SHORTCUTS    = 32 << MSG_SHIFT;
     private static final int MSG_HANDLE_SYSNAV_KEY             = 33 << MSG_SHIFT;
+    private static final int MSG_START_CUSTOM_INTENT_AFTER_KEYGUARD = 34 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -127,6 +129,7 @@ public class CommandQueue extends IStatusBar.Stub {
         void startAssist(Bundle args);
         void onCameraLaunchGestureDetected(int source);
         void showTvPictureInPictureMenu();
+        void showCustomIntentAfterKeyguard(Intent intent);
 
         void addQsTile(ComponentName tile);
         void remQsTile(ComponentName tile);
@@ -399,6 +402,12 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void showCustomIntentAfterKeyguard(Intent intent) {
+        mHandler.removeMessages(MSG_START_CUSTOM_INTENT_AFTER_KEYGUARD);
+        Message m = mHandler.obtainMessage(MSG_START_CUSTOM_INTENT_AFTER_KEYGUARD, 0, 0, intent);
+        m.sendToTarget();
+    }
+
     private final class H extends Handler {
         public void handleMessage(Message msg) {
             final int what = msg.what & MSG_MASK;
@@ -516,6 +525,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_HANDLE_SYSNAV_KEY:
                     mCallbacks.handleSystemNavigationKey(msg.arg1);
+                    break;
+                case MSG_START_CUSTOM_INTENT_AFTER_KEYGUARD:
+                    mCallbacks.showCustomIntentAfterKeyguard((Intent) msg.obj);
                     break;
             }
         }

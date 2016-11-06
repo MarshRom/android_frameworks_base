@@ -2777,6 +2777,18 @@ public class RemoteViews implements Parcelable, Filter {
     }
 
     /**
+     * @hide
+     * Equivalent to calling {@link android.view.View#setBackgroundTintList}.
+     *
+     * @param viewId The id of the view whose tint should change
+     * @param tint the tint to apply, may be {@code null} to clear tint
+     */
+    public void setBackgroundTintList(int viewId, ColorStateList tint) {
+        addAction(new ReflectionAction(viewId, "SetBackgroundTintList",
+                ReflectionAction.COLOR_STATE_LIST, tint));
+    }
+
+    /**
      * Equivalent to calling {@link android.widget.TextView#setTextColor(int)}.
      *
      * @param viewId The id of the view whose text color should change
