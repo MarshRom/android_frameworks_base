@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar.tv;
 
+import android.content.Intent;
 import android.content.ComponentName;
 import android.graphics.Rect;
 import android.os.IBinder;
@@ -107,6 +108,10 @@ public class TvStatusBar extends BaseStatusBar {
 
     @Override // CommandQueue
     public void notificationLightPulse(int argb, int onMillis, int offMillis) {
+    }
+
+    @Override // CommandQueue
+    public void showCustomIntentAfterKeyguard(Intent intent) {
     }
 
     @Override

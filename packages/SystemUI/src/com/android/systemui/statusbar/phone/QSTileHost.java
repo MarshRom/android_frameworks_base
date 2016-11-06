@@ -90,8 +90,8 @@ public class QSTileHost implements QSTile.Host, Tunable {
 
     private final Context mContext;
     private final PhoneStatusBar mStatusBar;
-    private final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
-    protected final ArrayList<String> mTileSpecs = new ArrayList<>();
+    private static final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
+    protected static final ArrayList<String> mTileSpecs = new ArrayList<>();
     private final BluetoothController mBluetooth;
     private final LocationController mLocation;
     private final RotationLockController mRotation;

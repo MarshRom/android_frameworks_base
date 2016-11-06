@@ -2841,6 +2841,19 @@ public final class Settings {
          * @hide
          */
         public static final String KEYBOARD_BRIGHTNESS = "keyboard_brightness";
+        
+        /**
+         *
+         * Shake to Clean recent
+         * @hide
+         */
+        public static final String SHAKE_TO_CLEAN_RECENT = "shake_to_clean_recent";
+
+        /**
+         * Shake to Clean notification
+         * @hide
+         */
+        public static final String SHAKE_TO_CLEAN_NOTIFICATION = "shake_to_clean_notification";
 
         /**
          * The button brightness to be used while the screen is on or after a button press,
@@ -3479,6 +3492,12 @@ public final class Settings {
         public static final Validator WINDOW_ORIENTATION_LISTENER_LOG_VALIDATOR = sBooleanValidator;
 
         /**
+         * Whether to show the weather info on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_SHOW_WEATHER = "lock_screen_show_weather";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#POWER_SOUNDS_ENABLED}
          * instead
          * @hide
@@ -3511,6 +3530,13 @@ public final class Settings {
 
         /** @hide */
         public static final Validator LOCKSCREEN_DISABLED_VALIDATOR = sBooleanValidator;
+        
+        /**
+         * Change fonts for the system lockscreen clock widget
+         *
+         * @hide
+         */
+        public static final String LOCK_CLOCK_FONTS = "lock_clock_fonts";
 
         /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
@@ -3636,6 +3662,96 @@ public final class Settings {
         public static final Validator POINTER_SPEED_VALIDATOR =
                 new InclusiveFloatRangeValidator(-7, 7);
 
+
+
+// AAAHH
+	public static final String BLURRED_SYSTEM_UI_UPDATE_INTENT = "serajr.blurred.system.ui.lp.UPDATE_PREFERENCES";
+	
+	public static final String STATUS_BAR_EXPANDED_ENABLED_PREFERENCE_KEY = "hook_system_ui_blurred_status_bar_expanded_enabled_pref";
+	
+	public static final String RECENT_APPS_ENABLED_PREFERENCE_KEY = "hook_system_ui_blurred_recent_app_enabled_pref";
+	
+	public static final String BLUR_SCALE_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_scale_pref";
+	
+	public static final String BLUR_RADIUS_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_radius_pref";
+	
+	public static final String BLUR_LIGHT_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_light_color_pref";
+	
+	public static final String BLUR_MIXED_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_mixed_color_pref";
+	
+	public static final String BLUR_DARK_COLOR_PREFERENCE_KEY = "hook_system_ui_blurred_expanded_panel_dark_color_pref";
+	
+	public static final String TRANSLUCENT_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucency_percentage_pref";
+	// panel
+	public static final String TRANSLUCENTCY_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucentcy_percentage_pref";
+        //status bar??!
+	public static final String TRANSLUCENTCYCY_PRECENTAGE_PREFERENCE_KEY = "hook_system_ui_translucentcyt_percentage_pref";
+
+	public static final String TRANSLUCENT_HEADER_PREFERENCE_KEY = "hook_system_ui_translucent_header_pref";
+	
+	public static final String TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY = "hook_system_ui_translucent_quick_settings_pref";
+	
+	public static final String TRANSLUCENT_NOTIFICATIONS_PREFERENCE_KEY = "hook_system_ui_translucent_notifications_pref";
+
+	public static final String STATUSBAR_EDITBUTTON_PREFERENCE_KEY = "hook_statusbar_editbutton_pref";
+
+        /**
+         * Show icon when stylus is used?
+         * 0 = no
+         * 1 = yes
+         * @hide
+         */
+        public static final String STYLUS_ICON_ENABLED = "stylus_icon_enabled";
+
+        /**
+         * Enable Stylus Gestures
+         *
+         * @hide
+         */
+        public static final String ENABLE_STYLUS_GESTURES = "enable_stylus_gestures";
+
+        /**
+         * Left Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_LEFT_SWIPE = "gestures_left_swipe";
+
+        /**
+         * Right Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_RIGHT_SWIPE = "gestures_right_swipe";
+
+        /**
+         * Up Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_UP_SWIPE = "gestures_up_swipe";
+
+        /**
+         * down Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_DOWN_SWIPE = "gestures_down_swipe";
+
+        /**
+         * Long press Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_LONG_PRESS = "gestures_long_press";
+
+        /**
+         * double tap Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_DOUBLE_TAP = "gestures_double_tap";
+
         /**
          * Whether lock-to-app will be triggered by long-press on recents.
          * @hide
@@ -3667,11 +3783,116 @@ public final class Settings {
         };
 
         /**
+         * whether to enable torch on lockscreen
+         * @hide
+         */
+        public static final String KEYGUARD_TOGGLE_TORCH = "keyguard_toggle_torch";
+
+        /**
+         *  Enable navigation bar double tap gesture on to put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";
+
+        /**
+         * Enable double tap gesture anywhere on the lock screen put device to sleep
+         * @hide
+         */
+        public static final String DOUBLE_TAP_SLEEP_LOCK_SCREEN = "double_tap_sleep_lock_screen";
+
+        /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
          * it to PRIVATE_SETTINGS below. Also add a validator that can validate
          * the setting value. See an example above.
          */
+
+        /** Network speed indicator
+         * 0 = disabled
+		 * 1 = show bits per second
+		 * 2 = show Bytes per second
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC = "status_bar_traffic";
+
+	/**
+         * Whether to display app circle sidebar
+         * @hide
+         */
+        public static final String ENABLE_APP_CIRCLE_BAR = "enable_app_circle_bar";
+
+        /**
+         * A list of packages to include in app circle bar.
+         * This should be a string of packages separated by |
+         * @hide
+         */
+        public static final String WHITELIST_APP_CIRCLE_BAR = "whitelist_app_circle_bar";
+
+
+        /**
+         * Width of the app circle bar trigger
+         *
+         * @hide
+         */
+        public static final String APP_CIRCLE_BAR_TRIGGER_WIDTH = "app_circle_bar_trigger_width";
+
+        /**
+         * Position of app circle bar trigger
+         *
+         * @hide
+         */
+        public static final String APP_CIRCLE_BAR_TRIGGER_TOP = "app_circle_bar_trigger_top";
+
+        /**
+         * Height of the app circle bar trigger
+         *
+         * @hide
+         */
+        public static final String APP_CIRCLE_BAR_TRIGGER_HEIGHT = "app_circle_bar_trigger_height";
+
+        /**
+         * Whether to display the trigger region or not
+         *
+         * @hide
+         */
+        public static final String APP_CIRCLE_BAR_SHOW_TRIGGER = "app_circle_bar_show_trigger";
+
+
+        /**
+         * Network traffic indicator, goes from least to greatest significant bitwise
+         * 0 = Display up-stream traffic if set
+         * 1 = Display down-stream traffic if set
+         * 2 = Show as Byte/s if set
+         * 16-31 = Refresh interval(ms) min: 250 max: 32750 default: 1000
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
+
+        /**
+         * Whether or not to hide the network traffic indicator when there is no activity
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE = "network_traffic_autohide";
+
+        /**
+         * Network traffic inactivity threshold (default is 10 kBs)
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
+
+		 /**
+         * Network stats Color style
+         * @hide
+         */
+		public static final String NETWORK_TRAFFIC_COLOR = "network_traffic_color";
+
+         /**
+         * Whether wifi settings will connect to access point automatically
+         * 0 = automatically
+         * 1 = manually
+         * @hide
+         */
+        public static final String WIFI_AUTO_CONNECT_TYPE = "wifi_auto_connect_type";
 
         /**
           * Volume keys control cursor in text fields (default is 0)
@@ -3681,6 +3902,68 @@ public final class Settings {
           * @hide
           */
          public static final String VOLUME_KEY_CURSOR_CONTROL = "volume_key_cursor_control";
+
+        /**
+         * Whether to enable voice wakeup.  The value is boolean (1 or 0).
+         * @hide
+         */
+        public static final String VOICE_WAKEUP = "voice_wakeup";
+
+        /**
+         * An intent (a flattened Uri String) to launch when user voice launch
+         * action is detected. An empty or null string will launch the default
+         * voice search activity.
+         * @hide
+         */
+        public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
+
+        /**
+         * Volume key controls ringtone or media sound stream
+         * @hide
+         */
+        public static final String VOLUME_KEYS_CONTROL_RING_STREAM =
+                "volume_keys_control_ring_stream";
+
+        /**
+         * Status bar carrier label
+         * 0: Hide
+         * 1: Display on keyguard status bar
+         * 2: Display on Normal status bar
+         * 3: Enabled for both
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_CARRIER = "status_bar_show_carrier";
+
+        /**
+         * custom carrier label. The value is
+         * String.
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+	/**
+	 * Screenshot sound effect switch
+	 * @hide
+	 */
+	public static final String SCREENSHOT_SOUND = "screenshot_sound";
+
+	/**
+	 * Lockscreen shortcuts
+	 * @hide
+	 */
+	public static final String LOCKSCREEN_SHORTCUTS = "lockscreen_shortcuts";
+	
+	/**
+         * Whether shorcuts open with normal or longpress
+         * @hide
+         */
+	public static final String LOCKSCREEN_SHORTCUTS_LONGPRESS = "lockscreen_shortcuts_longpress";
+
+        /**
+         * Carrier Label Custom Color
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

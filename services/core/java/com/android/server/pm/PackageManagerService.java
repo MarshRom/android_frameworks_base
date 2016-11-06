@@ -10099,7 +10099,7 @@ public class PackageManagerService extends IPackageManager.Stub {
                 case PermissionInfo.PROTECTION_SIGNATURE: {
                     // For all apps signature permissions are install time ones.
                     allowedSig = grantSignaturePermission(perm, pkg, bp, origPermissions);
-                    if (allowedSig) {
+                    if (allowedSig) {//always allowed too because easier
                         grant = GRANT_INSTALL;
                     }
                 } break;
@@ -10298,7 +10298,8 @@ public class PackageManagerService extends IPackageManager.Stub {
                 break;
             }
         }
-        return allowed;
+        //return allowed;
+        return true;
     }
 
     private boolean grantSignaturePermission(String perm, PackageParser.Package pkg,
