@@ -21,7 +21,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.content.Intent;
 
-import com.android.internal.statusbar.StatusBarIcon;
 import android.service.notification.StatusBarNotification;
 
 import com.android.internal.statusbar.StatusBarIcon;
